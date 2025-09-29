@@ -1,5 +1,5 @@
 public class bac_ronando {
-    public static void siu(){
+    public static void siuu( ){
         System.out.println("siuu :0");
     }
 }
