@@ -35,7 +35,7 @@ public class Login extends JFrame {
     public Login() {
         setTitle("Arkanoid — Login / Register");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1200, 880); // khớp yêu cầu
+        setSize(1200, 800); // khớp yêu cầu
         setLocationRelativeTo(null);
 
         ensureAccountFile();
