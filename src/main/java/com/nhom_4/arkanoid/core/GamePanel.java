@@ -47,7 +47,7 @@ public class GamePanel extends JPanel implements Runnable {
             repaint();
             frames++;
             if (System.currentTimeMillis() - fpsTimer >= 1000) {
-                Time.setFPS(frames);
+                game.setFps(frames);
                 frames = 0;
                 fpsTimer += 1000;
             }

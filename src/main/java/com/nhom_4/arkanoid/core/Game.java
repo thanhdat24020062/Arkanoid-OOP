@@ -24,6 +24,10 @@ public class Game {
 
     private KeyInput keys;
 
+    public void setFps(int fps) {
+        hud.setFps(fps);
+    }
+
     public void bindInput(KeyInput k) {
         this.keys = k;
     }
