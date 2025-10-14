@@ -7,14 +7,18 @@ import java.util.*;
 import com.nhom_4.arkanoid.config.Constants;
 import com.nhom_4.arkanoid.entity.*;
 import com.nhom_4.arkanoid.input.KeyInput;
+import com.nhom_4.arkanoid.input.MouseInput;
 import com.nhom_4.arkanoid.level.*;
 import com.nhom_4.arkanoid.physics.*;
 import com.nhom_4.arkanoid.ui.*;
+import com.nhom_4.arkanoid.ui.Menu;
 
 public class Game {
     private GameState state = GameState.MENU;
     private final HUD hud = new HUD();
     private final Screens screens = new Screens();
+
+    private final Menu menu = new Menu();
 
     private final LevelManager levelManager = new LevelManager();
 
@@ -22,6 +26,7 @@ public class Game {
     private Ball ball;
     private java.util.List<Brick> bricks;
 
+    private MouseInput mouse;
     private KeyInput keys;
 
     public void setFps(int fps) {
@@ -30,6 +35,10 @@ public class Game {
 
     public void bindInput(KeyInput k) {
         this.keys = k;
+    }
+
+    public void bindInput(MouseInput m) {
+        this.mouse = m;
     }
 
     public Game() {
@@ -56,8 +65,11 @@ public class Game {
     public void update(double dt) {
         switch (state) {
             case MENU:
-                if (keys.consumeSpace())
+                Menu.Action act = menu.update(mouse);
+                if (act == Menu.Action.START)
                     state = GameState.PLAYING;
+                else if (act == Menu.Action.EXIT)
+                    System.exit(0);
                 break;
             case PAUSED:
                 if (keys.consumeSpace())
@@ -156,6 +168,11 @@ public class Game {
     }
 
     public void render(Graphics2D g) {
+        if (state == GameState.MENU) {
+            // ▼ vẽ menu thay vì màn chơi
+            menu.render(g);
+            return;
+        }
         // nền + tường
         screens.drawBackground(g);
         screens.drawWalls(g);
@@ -175,7 +192,7 @@ public class Game {
         // overlay trạng thái
         switch (state) {
             case MENU:
-                screens.drawCenterText(g, "ARKANOID", "Press SPACE to start");
+                menu.render(g);
                 break;
             case PAUSED:
                 screens.drawCenterText(g, "PAUSED", "Press SPACE to resume");
@@ -188,4 +205,5 @@ public class Game {
                 break;
         }
     }
+
 }
