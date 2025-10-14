@@ -17,7 +17,6 @@ public class Game {
     private GameState state = GameState.MENU;
     private final HUD hud = new HUD();
     private final Screens screens = new Screens();
-
     private final Menu menu = new Menu();
 
     private final LevelManager levelManager = new LevelManager();
@@ -28,6 +27,7 @@ public class Game {
 
     private MouseInput mouse;
     private KeyInput keys;
+    private boolean showPressSpace = true;
 
     public void setFps(int fps) {
         hud.setFps(fps);
@@ -66,8 +66,9 @@ public class Game {
         switch (state) {
             case MENU:
                 Menu.Action act = menu.update(mouse);
-                if (act == Menu.Action.START)
-                    state = GameState.PLAYING;
+                if (act == Menu.Action.START){
+                    showPressSpace=true;
+                    state = GameState.PLAYING;}
                 else if (act == Menu.Action.EXIT)
                     System.exit(0);
                 break;
@@ -91,6 +92,7 @@ public class Game {
                     ball.setY(paddle.getY() - ball.getR() - 2);
                     if (keys.consumeSpace()) {
                         ball.launchRandomUp();
+                        showPressSpace=false;// ẩn showPressSpace
                     }
                 } else {
                     ball.update(dt);
@@ -168,11 +170,6 @@ public class Game {
     }
 
     public void render(Graphics2D g) {
-        if (state == GameState.MENU) {
-            // ▼ vẽ menu thay vì màn chơi
-            menu.render(g);
-            return;
-        }
         // nền + tường
         screens.drawBackground(g);
         screens.drawWalls(g);
@@ -193,6 +190,11 @@ public class Game {
         switch (state) {
             case MENU:
                 menu.render(g);
+                break;
+            case PLAYING:
+                if (showPressSpace) {
+                    screens.drawCenterText(g, "", "Press SPACE to start");
+                }
                 break;
             case PAUSED:
                 screens.drawCenterText(g, "PAUSED", "Press SPACE to resume");
