@@ -1,38 +1,40 @@
 package com.nhom_4.arkanoid.physics;
 
-import java.awt.geom.*;
+import java.awt.geom.Rectangle2D;
+import com.nhom_4.arkanoid.entity.Ball;
+import com.nhom_4.arkanoid.entity.Brick;
 
-import com.nhom_4.arkanoid.entity.*;
+public class Resolver {
+    public static void resolveBallBrick(Ball ball, Brick brick) {
+        Rectangle2D.Double ballRect = ball.getRect();
+        Rectangle2D.Double brickRect = brick.getRect();
 
-public final class Resolver {
-    private Resolver() {
-    }
+        // Tìm vùng giao nhau giữa bóng và gạch
+        Rectangle2D.Double intersection = new Rectangle2D.Double();
+        Rectangle2D.intersect(ballRect, brickRect, intersection);
 
-    public static void resolveBallBrick(Ball ball, Brick br) {
-        Rectangle2D.Double rct = br.getRect();
-        // tính overlap tối thiểu theo trục
-        double overlapLeft = (ball.getX() + ball.getR()) - rct.x;
-        double overlapRight = (rct.x + rct.width) - (ball.getX() - ball.getR());
-        double overlapTop = (ball.getY() + ball.getR()) - rct.y;
-        double overlapBottom = (rct.y + rct.height) - (ball.getY() - ball.getR());
-        double minX = Math.min(overlapLeft, overlapRight);
-        double minY = Math.min(overlapTop, overlapBottom);
+        // Nếu chiều rộng vùng giao nhau nhỏ hơn chiều cao
+        // -> va chạm xảy ra ở cạnh trái hoặc phải của gạch
+        if (intersection.width < intersection.height) {
+            // Đảo ngược vận tốc X
+            ball.setVx(-ball.getVx());
 
-        if (minX < minY) {
-            if (overlapLeft < overlapRight) {
-                ball.setX(rct.x - ball.getR() - 0.1);
-                ball.setVx(-Math.abs(ball.getVx()));
-            } else {
-                ball.setX(rct.x + rct.width + ball.getR() + 0.1);
-                ball.setVx(Math.abs(ball.getVx()));
+            // Đẩy nhẹ quả bóng ra khỏi gạch theo chiều ngang
+            if (ball.getX() < brick.centerX()) { // Bóng ở bên trái gạch
+                ball.setX(ball.getX() - intersection.width);
+            } else { // Bóng ở bên phải gạch
+                ball.setX(ball.getX() + intersection.width);
             }
-        } else {
-            if (overlapTop < overlapBottom) {
-                ball.setY(rct.y - ball.getR() - 0.1);
-                ball.setVy(-Math.abs(ball.getVy()));
-            } else {
-                ball.setY(rct.y + rct.height + ball.getR() + 0.1);
-                ball.setVy(Math.abs(ball.getVy()));
+
+        } else { // Ngược lại -> va chạm xảy ra ở cạnh trên hoặc dưới của gạch
+            // Đảo ngược vận tốc Y
+            ball.setVy(-ball.getVy());
+
+            // Đẩy nhẹ quả bóng ra khỏi gạch theo chiều dọc
+            if (ball.getY() < brick.centerY()) { // Bóng ở bên trên gạch
+                ball.setY(ball.getY() - intersection.height);
+            } else { // Bóng ở bên dưới gạch
+                ball.setY(ball.getY() + intersection.height);
             }
         }
     }

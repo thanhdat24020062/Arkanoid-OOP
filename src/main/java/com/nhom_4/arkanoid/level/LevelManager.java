@@ -1,27 +1,40 @@
 package com.nhom_4.arkanoid.level;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LevelManager {
-    private int index = 0;
-    private final int total = 6; // 3 mẫu * 2 vòng lặp
+
+    private final List<Level> levels;
+    private int currentLevelIndex;
+
+    public LevelManager() {
+        levels = new ArrayList<>();
+
+        // Thêm tất cả các màn chơi bạn muốn vào đây
+        levels.add(new DynamicTopLevel());
+        // levels.add(new DataDrivenLevel(LevelLoader.full())); // Bạn có thể thêm các
+        // level khác nếu muốn
+
+        currentLevelIndex = -1;
+    }
 
     public void reset() {
-        index = 0;
+        currentLevelIndex = 0;
     }
 
     public Level getCurrentLevel() {
-        int pick = index % 3;
-        switch (pick) {
-            case 1:
-                return new Level(LevelLoader.diagonal());
-            case 2:
-                return new Level(LevelLoader.checker());
-            default:
-                return new Level(LevelLoader.full());
+        if (currentLevelIndex >= levels.size()) {
+            return levels.get(levels.size() - 1);
         }
+        if (currentLevelIndex < 0) {
+            return levels.get(0);
+        }
+        return levels.get(currentLevelIndex);
     }
 
     public boolean nextLevel() {
-        index++;
-        return index < total;
+        currentLevelIndex++;
+        return currentLevelIndex < levels.size();
     }
 }

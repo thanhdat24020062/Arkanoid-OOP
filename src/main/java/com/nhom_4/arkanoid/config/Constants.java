@@ -17,10 +17,10 @@ public final class Constants {
     // Tường
     public static final int WALL_THICK = 8;
     public static final int TOP_WALL = 20;
-    public static final int TOP_OFFSET = 70; // top area cho gạch
+    public static final double TOP_OFFSET = TOP_WALL + 5;
 
     // Paddle
-    public static final double PADDLE_WIDTH = 110;
+    public static final double PADDLE_WIDTH = 85;
     public static final double PADDLE_HEIGHT = 16;
     public static final double PADDLE_SPEED = 520;
 

@@ -8,6 +8,8 @@ public class Ball extends Entity {
     private double vx, vy, r;
     private boolean stickToPaddle = true;
     private final Random rng = new Random();
+    private boolean isFireball = false;
+    private double fireballTimer = 0;
 
     public Ball(double x, double y, double r) {
         this.x = x;
@@ -84,20 +86,53 @@ public class Ball extends Entity {
             vy = Math.copySign(120, vy == 0 ? -1 : vy);
     }
 
+    public void activateFireball(double duration) {
+        this.isFireball = true;
+        this.fireballTimer = duration;
+    }
+
+    public void deactivateFireball() {
+        this.isFireball = false;
+        this.fireballTimer = 0;
+    }
+
+    public boolean isFireball() {
+        return this.isFireball;
+    }
+
     @Override
     public void update(double dt) {
+        // 1. Cập nhật vị trí như bình thường
         x += vx * dt;
         y += vy * dt;
+
+        // 2. Thêm logic đếm ngược thời gian cho bóng lửa
+        if (isFireball) {
+            // Trừ đi thời gian đã trôi qua (dt) từ bộ đếm
+            fireballTimer -= dt;
+
+            // Nếu bộ đếm hết giờ, tắt hiệu ứng bóng lửa
+            if (fireballTimer <= 0) {
+                deactivateFireball();
+            }
+        }
     }
 
     @Override
     public void render(Graphics2D g) {
         g.setColor(new Color(255, 245, 180));
+        if (isFireball) {
+            g.setColor(new Color(255, 100, 0)); // Màu cam đỏ
+        } else {
+            g.setColor(new Color(255, 245, 180)); // Màu gốc
+        }
         g.fill(new Ellipse2D.Double(x - r, y - r, r * 2, r * 2));
     }
 
     @Override
     public Rectangle2D.Double getRect() {
-        return new Rectangle2D.Double(x - r, y - r, r * 2, r * 2);
+        // Tọa độ góc trên bên trái là (x - r, y - r)
+        // Chiều rộng và chiều cao là (2 * r)
+        return new Rectangle2D.Double(x - r, y - r, 2 * r, 2 * r);
     }
 }
