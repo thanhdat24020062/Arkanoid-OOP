@@ -69,21 +69,29 @@ public class Ball extends Entity {
         return r;
     }
 
-    public void limitSpeed(double cap) {
-        double s = Math.hypot(vx, vy);
-        if (s > cap) {
-            double f = cap / s;
-            vx *= f;
-            vy *= f;
-        }
-    }
+    // Trong file Ball.java
 
     public void speedUp(double mul, double cap) {
+        // Tăng vận tốc hiện tại
         vx *= mul;
         vy *= mul;
+
+        // Ngay lập tức gọi hàm giới hạn tốc độ để đảm bảo không bị vượt quá
         limitSpeed(cap);
-        if (Math.abs(vy) < 120)
-            vy = Math.copySign(120, vy == 0 ? -1 : vy);
+    }
+
+    public void limitSpeed(double cap) {
+        // Tính toán tốc độ hiện tại từ vx và vy
+        double currentSpeed = Math.hypot(vx, vy);
+
+        // Nếu tốc độ hiện tại vượt quá giới hạn
+        if (currentSpeed > cap) {
+            // Tìm tỉ lệ cần giảm xuống
+            double factor = cap / currentSpeed;
+            // Giảm vx và vy theo đúng tỉ lệ đó
+            vx *= factor;
+            vy *= factor;
+        }
     }
 
     public void activateFireball(double duration) {

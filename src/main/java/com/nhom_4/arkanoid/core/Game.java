@@ -1,16 +1,23 @@
 package com.nhom_4.arkanoid.core;
 
-import java.awt.*;
-import java.awt.geom.*;
-import java.util.*;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import com.nhom_4.arkanoid.config.Constants;
-import com.nhom_4.arkanoid.entity.*;
+import com.nhom_4.arkanoid.entity.Ball;
+import com.nhom_4.arkanoid.entity.Brick;
+import com.nhom_4.arkanoid.entity.Bullet;
+import com.nhom_4.arkanoid.entity.Paddle;
+import com.nhom_4.arkanoid.entity.PowerUpManager;
 import com.nhom_4.arkanoid.input.KeyInput;
-import com.nhom_4.arkanoid.level.*;
-import com.nhom_4.arkanoid.physics.*;
-import com.nhom_4.arkanoid.ui.*;
+import com.nhom_4.arkanoid.physics.Collision;
+import com.nhom_4.arkanoid.physics.Resolver;
+import com.nhom_4.arkanoid.ui.HUD;
+import com.nhom_4.arkanoid.ui.Screens;
 
 public class Game {
     private GameState state = GameState.MENU;
@@ -19,51 +26,125 @@ public class Game {
     private final PowerUpManager powerUpManager = new PowerUpManager();
     private final List<Bullet> bullets = new ArrayList<>();
 
-    private final LevelManager levelManager = new LevelManager();
+    // --- LOGIC LEVEL ĐƠN GIẢN HÓA ---
+    private List<int[][]> levelMaps;
+    private int currentLevelIndex;
+    // ------------------------------------
 
     private Paddle paddle;
     private Ball ball;
-    private java.util.List<Brick> bricks;
-
+    private List<Brick> bricks;
     private KeyInput keys;
 
-    public void setFps(int fps) {
-        hud.setFps(fps);
-    }
-
-    public void bindInput(KeyInput k) {
-        this.keys = k;
-    }
-
     public Game() {
+        loadAllLevelMaps(); // Tải tất cả các map khi khởi tạo
         startNewGame();
     }
 
+    // --- CÁC PHƯƠNG THỨC QUẢN LÝ LEVEL MỚI ---
+    private void loadAllLevelMaps() {
+        levelMaps = new ArrayList<>();
+
+        // Map 1: Một vài hàng gạch
+        levelMaps.add(new int[][] {
+                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+                { 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2 },
+                { 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1 },
+                { 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2 },
+                { 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2 },
+                { 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2 },
+        });
+
+        // Map 2: Map bàn cờ
+        levelMaps.add(new int[][] {
+                { 9, 0, 2, 0, 2, 0, 2, 0, 2, 0, 9, 0 },
+                { 0, 9, 0, 1, 0, 1, 0, 1, 0, 9, 0, 9 },
+                { 9, 0, 2, 0, 2, 0, 2, 0, 2, 0, 9, 0 },
+                { 0, 9, 0, 1, 0, 1, 0, 1, 0, 9, 0, 9 },
+        });
+    }
+
+    private List<Brick> spawnBricksForCurrentLevel() {
+        List<Brick> newBricks = new ArrayList<>();
+        int[][] currentMap = levelMaps.get(currentLevelIndex);
+
+        List<String> brickImagePaths = List.of(
+                "res/images/brick_blue.png",
+                "res/images/brick_cyan.png",
+                "res/images/brick_gold.png",
+                "res/images/brick_orange.png",
+                "res/images/brick_silver_2.png");
+        Random random = new Random();
+
+        double playableWidth = Constants.WIDTH - (2 * Constants.WALL_THICK);
+        int numColumns = currentMap[0].length;
+        double brickWidth = playableWidth / numColumns;
+        double brickHeight = brickWidth / 2.5;
+
+        for (int i = 0; i < currentMap.length; i++) {
+            for (int j = 0; j < currentMap[i].length; j++) {
+                int health = currentMap[i][j];
+                if (health == 0)
+                    continue;
+
+                double brickX = Constants.WALL_THICK + j * brickWidth;
+                double brickY = Constants.TOP_OFFSET + i * brickHeight;
+
+                String randomImagePath = brickImagePaths.get(random.nextInt(brickImagePaths.size()));
+
+                newBricks.add(new Brick(brickX, brickY, brickWidth, brickHeight, health, randomImagePath));
+            }
+        }
+        return newBricks;
+    }
+
+    private boolean nextLevel() {
+        currentLevelIndex++;
+        return currentLevelIndex < levelMaps.size();
+    }
+    // -----------------------------------------
+
     private void startNewGame() {
         hud.reset();
-        levelManager.reset();
         powerUpManager.reset();
         bullets.clear();
+        currentLevelIndex = 0; // Bắt đầu từ màn 1
         loadCurrentLevel();
         state = GameState.MENU;
     }
 
     private void loadCurrentLevel() {
-        Level lvl = levelManager.getCurrentLevel();
-        this.bricks = lvl.spawnBricks();
+        this.bricks = spawnBricksForCurrentLevel();
         bullets.clear();
 
         double pw = Constants.PADDLE_WIDTH;
-        paddle = new Paddle(Constants.WIDTH / 2.0 - pw / 2.0,
-                Constants.HEIGHT - 50, pw, Constants.PADDLE_HEIGHT, Constants.PADDLE_SPEED);
-
+        paddle = new Paddle(Constants.WIDTH / 2.0 - pw / 2.0, Constants.HEIGHT - 50, pw, Constants.PADDLE_HEIGHT,
+                Constants.PADDLE_SPEED);
         ball = new Ball(paddle.centerX(), paddle.getY() - Constants.BALL_RADIUS - 2, Constants.BALL_RADIUS);
-        ball.stickToPaddle(true);
 
-        // Tắt các hiệu ứng khi qua màn mới
+        resetAndStickBall();
+    }
+
+    private void resetAndStickBall() {
         paddle.deactivateLasers();
         ball.deactivateFireball();
-        powerUpManager.reset();
+        ball.stickToPaddle(true);
+        ball.setVx(0);
+        ball.setVy(0);
+        paddle.setX(Constants.WIDTH / 2.0 - paddle.getW() / 2.0);
+    }
+
+    // --- PHẦN CÒN LẠI CỦA FILE GAME.JAVA ---
+    // (Toàn bộ các hàm update, render, và các hàm xử lý khác giữ nguyên như file
+    // hoàn chỉnh cuối cùng tôi đã gửi)
+    // Dưới đây là các hàm đó để bạn tiện copy & paste.
+
+    public void bindInput(KeyInput k) {
+        this.keys = k;
+    }
+
+    public void setFps(int fps) {
+        hud.setFps(fps);
     }
 
     public void update(double dt) {
@@ -79,48 +160,42 @@ public class Game {
                     startNewGame();
                 break;
             case PLAYING:
-                // Cập nhật paddle
-                double dir = (keys.isLeft() ? -1 : 0) + (keys.isRight() ? 1 : 0);
-                paddle.update(dt, dir);
-
-                // Cập nhật bóng và xử lý bắn/phóng
-                if (ball.isSticking()) {
-                    // Nếu bóng đang dính, Space sẽ phóng bóng
-                    ball.setX(paddle.centerX());
-                    ball.setY(paddle.getY() - ball.getR() - 2);
-                    if (keys.consumeSpace()) {
-                        ball.launchRandomUp();
-                    }
-                } else {
-                    // Nếu bóng đang bay, Space sẽ bắn súng
-                    if (paddle.hasLasers()) {
-                        List<Bullet> newBullets = paddle.shoot();
-                        if (newBullets != null) {
-                            bullets.addAll(newBullets);
-                        }
-                    }
-                    ball.update(dt);
-                }
-
-                // Cập nhật power-ups và đạn
-                powerUpManager.update(dt, paddle, hud, ball);
-                handleBullets(dt);
-
-                // Xử lý va chạm
-                Collision.reflectBallOnWalls(ball);
-                handleBricks();
-                handlePaddleCollision();
-
-                // Kiểm tra thắng/thua
-                checkWinLoseConditions();
-
-                // Tạm dừng
-                if (keys.isPressedP())
-                    state = GameState.PAUSED;
-                if (keys.isPressedR())
-                    startNewGame();
+                updatePlayingState(dt);
                 break;
         }
+    }
+
+    private void updatePlayingState(double dt) {
+        double dir = (keys.isLeft() ? -1 : 0) + (keys.isRight() ? 1 : 0);
+        paddle.update(dt, dir);
+
+        if (ball.isSticking()) {
+            ball.setX(paddle.centerX());
+            ball.setY(paddle.getY() - ball.getR() - 2);
+            if (keys.consumeSpace())
+                ball.launchRandomUp();
+        } else {
+            if (paddle.hasLasers()) {
+                List<Bullet> newBullets = paddle.shoot();
+                if (newBullets != null)
+                    bullets.addAll(newBullets);
+            }
+            ball.update(dt);
+        }
+
+        powerUpManager.update(dt, paddle, hud, ball);
+        handleBullets(dt);
+
+        Collision.reflectBallOnWalls(ball);
+        handleBricks();
+        handlePaddleCollision();
+
+        checkWinLoseConditions();
+
+        if (keys.isPressedP())
+            state = GameState.PAUSED;
+        if (keys.isPressedR())
+            startNewGame();
     }
 
     private void handlePaddleCollision() {
@@ -134,24 +209,15 @@ public class Game {
     }
 
     private void checkWinLoseConditions() {
-        // Thua
         if (ball.getY() - ball.getR() > Constants.HEIGHT) {
             hud.loseLife();
-            if (hud.getLives() <= 0) {
+            if (hud.getLives() <= 0)
                 state = GameState.GAME_OVER;
-            } else {
-                // Hồi sinh bóng và paddle, tắt mọi hiệu ứng
-                ball.deactivateFireball();
-                paddle.deactivateLasers();
-                ball.stickToPaddle(true);
-                ball.setVx(0);
-                ball.setVy(0);
-                paddle.setX(Constants.WIDTH / 2.0 - paddle.getW() / 2.0);
-            }
+            else
+                resetAndStickBall();
         }
-        // Thắng
         if (allCleared()) {
-            if (levelManager.nextLevel()) {
+            if (nextLevel()) {
                 loadCurrentLevel();
                 state = GameState.PAUSED;
             } else {
@@ -165,7 +231,6 @@ public class Game {
         while (bulletIterator.hasNext()) {
             Bullet bullet = bulletIterator.next();
             bullet.update(dt);
-
             boolean hit = false;
             for (Brick brick : bricks) {
                 if (brick.isAlive() && bullet.getRect().intersects(brick.getRect())) {
@@ -175,20 +240,18 @@ public class Game {
                     break;
                 }
             }
-
-            if (!bullet.isActive() || hit) {
+            if (!bullet.isActive() || hit)
                 bulletIterator.remove();
-            }
         }
     }
 
     private void handleBricks() {
-        Rectangle2D.Double brect = ball.getRect();
+        Rectangle2D.Double ballRect = ball.getRect();
         for (Brick br : bricks) {
             if (!br.isAlive())
                 continue;
 
-            if (brect.intersects(br.getRect())) {
+            if (ballRect.intersects(br.getRect())) {
                 if (ball.isFireball()) {
                     br.destroy();
                     hud.addScore(50);
@@ -218,6 +281,7 @@ public class Game {
     public void render(Graphics2D g) {
         screens.drawBackground(g);
         screens.drawWalls(g);
+        screens.drawDeathLine(g);
 
         for (Brick br : bricks)
             if (br.isAlive())
@@ -226,14 +290,16 @@ public class Game {
         paddle.render(g);
         ball.render(g);
 
-        for (Bullet b : bullets) {
+        for (Bullet b : bullets)
             b.render(g);
-        }
 
         powerUpManager.render(g);
         hud.render(g);
 
-        // Overlay trạng thái game
+        renderOverlay(g);
+    }
+
+    private void renderOverlay(Graphics2D g) {
         switch (state) {
             case MENU:
                 screens.drawCenterText(g, "ARKANOID", "Press SPACE to start");

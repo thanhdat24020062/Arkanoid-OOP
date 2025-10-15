@@ -66,6 +66,7 @@ public class PowerUpManager {
                 break;
             case FIREBALL: // <-- Thêm case này
                 ball.activateFireball(5.0); // Kích hoạt bóng lửa trong 5 giây
+                break;
             case LASER_PADDLE:
                 paddle.activateLasers(7.0); // Kích hoạt súng trong 7 giây
                 break;
