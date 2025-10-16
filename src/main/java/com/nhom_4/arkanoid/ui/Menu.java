@@ -1,7 +1,9 @@
 package com.nhom_4.arkanoid.ui;
 
+import java.awt.image.BufferedImage;
 import java.awt.*;
 import com.nhom_4.arkanoid.config.Constants;
+import com.nhom_4.arkanoid.gfx.Assets;
 import com.nhom_4.arkanoid.gfx.Renderer;
 import com.nhom_4.arkanoid.input.MouseInput;
 import com.nhom_4.arkanoid.audio.Sound;
@@ -64,38 +66,57 @@ public class Menu {
         return Action.NONE;
     }
 
+    public void drawMenuBackground(Graphics2D g) {
+        BufferedImage img = Assets.MENU_BG;
+        if (img != null) {
+            // Vẽ kiểu “cover” (giữ tỉ lệ, có thể crop 2 biên)
+            double sw = img.getWidth(), sh = img.getHeight();
+            double s = Math.max(Constants.WIDTH / sw, Constants.HEIGHT / sh);
+            int dw = (int) Math.round(sw * s);
+            int dh = (int) Math.round(sh * s);
+            int dx = (Constants.WIDTH - dw) / 2;
+            int dy = (Constants.HEIGHT - dh) / 2;
+            g.drawImage(img, dx, dy, dw, dh, null);
+        } else {
+            // Fallback nếu thiếu ảnh
+            Paint old = g.getPaint();
+            g.setPaint(new GradientPaint(0, 0, new Color(20, 24, 36),
+                    0, Constants.HEIGHT, new Color(18, 18, 22)));
+            g.fillRect(0, 0, Constants.WIDTH, Constants.HEIGHT);
+            g.setPaint(old);
+        }
+        // Overlay mờ để chữ/nút nổi hơn
+        g.setColor(new Color(0, 0, 0, 30));
+        g.fillRect(0, 0, Constants.WIDTH, Constants.HEIGHT);
+    }
+
     /** Vẽ nền + tiêu đề + các nút + (tuỳ chọn) khung hướng dẫn */
-    public void render(Graphics2D g) {
-        Screens s = new Screens();
-        s.drawBackground(g);
-        s.drawWalls(g);
-
-        g.setFont(titleFont);
-        g.setColor(new Color(255, 255, 255, 230));
-        Renderer.drawCenteredString(g, "ARKANOID", Constants.HEIGHT / 2 - 120, g.getFont(), g.getColor());
-
+    public void render(Graphics2D g, MouseInput mouseInput) {
+        this.drawMenuBackground(g);
         int baseY = Constants.HEIGHT / 2 - 20;
-        int gap = 70;
+        int gap = 120;
 
-        // Cần metrics để tính bounds click trùng với nút vẽ
-        FontMetrics fm = g.getFontMetrics(itemFont);
-        int padX = 24, padY = 12;
+        Point mousePos = mouseInput.getPosition(); // thêm hàm này trong MouseInput nếu chưa có
 
         for (int i = 0; i < items.length; i++) {
-            boolean focus = (i == selected);
-            int y = baseY + i * gap;
-
-            // vẽ nút
-            Renderer.drawButton(g, items[i], Constants.WIDTH / 2, y, focus, itemFont);
-
-            // update bounds để click
-            int textW = fm.stringWidth(items[i]);
-            int textH = fm.getAscent();
-            int w = textW + padX * 2;
-            int h = textH + padY * 2;
-            int x = Constants.WIDTH / 2 - w / 2;
-            int top = y - textH - padY;
-            btn[i].setBounds(x, top, w, h);
+            BufferedImage taget=null;
+            if(i==0) taget=Assets.BUTTON_START;
+            else if(i==1) taget=Assets.BUTTON_HOW_TO_PLAY;
+            else taget=Assets.BUTTON_EXIT;
+            int cy = baseY + i * gap; // centerY theo hàng
+            Rectangle r = Renderer.drawButtonInMenu(
+                    g,
+                    taget, // ảnh nền nút bạn đã load
+                    items[i], // text
+                    Constants.WIDTH / 2, // centerX
+                    cy, // centerY
+                    Assets.fontPixels_40, 
+                    mousePos,
+                    0.20f, // scaleNormal
+                    0.20f * 1.06f // scaleHover // để biết hover
+            // , 1.0f, 1.06f // (tuỳ chọn) scale thường & khi hover
+            );
+            btn[i].setBounds(r); // cập nhật hitbox click
         }
 
         if (showHelp)

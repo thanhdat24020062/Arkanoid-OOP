@@ -6,6 +6,8 @@ import java.util.*;
 
 import com.nhom_4.arkanoid.config.Constants;
 import com.nhom_4.arkanoid.entity.*;
+import com.nhom_4.arkanoid.gfx.Assets;
+import com.nhom_4.arkanoid.gfx.Renderer;
 import com.nhom_4.arkanoid.input.KeyInput;
 import com.nhom_4.arkanoid.input.MouseInput;
 import com.nhom_4.arkanoid.level.*;
@@ -66,10 +68,10 @@ public class Game {
         switch (state) {
             case MENU:
                 Menu.Action act = menu.update(mouse);
-                if (act == Menu.Action.START){
-                    showPressSpace=true;
-                    state = GameState.PLAYING;}
-                else if (act == Menu.Action.EXIT)
+                if (act == Menu.Action.START) {
+                    showPressSpace = true;
+                    state = GameState.PLAYING;
+                } else if (act == Menu.Action.EXIT)
                     System.exit(0);
                 break;
             case PAUSED:
@@ -92,7 +94,7 @@ public class Game {
                     ball.setY(paddle.getY() - ball.getR() - 2);
                     if (keys.consumeSpace()) {
                         ball.launchRandomUp();
-                        showPressSpace=false;// ẩn showPressSpace
+                        showPressSpace = false;// ẩn showPressSpace
                     }
                 } else {
                     ball.update(dt);
@@ -189,21 +191,21 @@ public class Game {
         // overlay trạng thái
         switch (state) {
             case MENU:
-                menu.render(g);
+                menu.render(g, mouse);
                 break;
             case PLAYING:
                 if (showPressSpace) {
-                    screens.drawCenterText(g, "", "Press SPACE to start");
+                    Renderer.renderText(g, "Press Space to Start", Assets.fontPixels_40, 600, 150, Color.WHITE);
                 }
                 break;
+            //Sẽ làm màn hình pause, game_over, you_win sau, cấm tk nào động vào đoạn này!
             case PAUSED:
-                screens.drawCenterText(g, "PAUSED", "Press SPACE to resume");
                 break;
             case GAME_OVER:
-                screens.drawCenterText(g, "GAME OVER", "Press R to restart");
+
                 break;
             case YOU_WIN:
-                screens.drawCenterText(g, "YOU WIN!", "Press R to play again");
+
                 break;
         }
     }

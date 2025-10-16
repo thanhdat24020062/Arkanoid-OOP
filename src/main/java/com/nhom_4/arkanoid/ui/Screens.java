@@ -22,11 +22,4 @@ public class Screens {
         g.fillRect(0, 0, Constants.WALL_THICK, Constants.HEIGHT);
         g.fillRect(Constants.WIDTH - Constants.WALL_THICK, 0, Constants.WALL_THICK, Constants.HEIGHT);
     }
-
-    public void drawCenterText(Graphics2D g, String title, String sub) {
-        g.setColor(new Color(255, 255, 255, 230));
-        Renderer.drawCenteredString(g, title, Constants.HEIGHT / 2 - 20, big, g.getColor());
-        g.setColor(Color.WHITE);
-        Renderer.drawCenteredString(g, sub, Constants.HEIGHT / 2 + 12, small, g.getColor());
-    }
 }
