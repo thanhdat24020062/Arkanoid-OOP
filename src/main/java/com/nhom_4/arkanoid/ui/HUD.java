@@ -2,7 +2,6 @@ package com.nhom_4.arkanoid.ui;
 
 import java.awt.*;
 
-
 public class HUD {
     private int score = 0;
     private int lives = 3;
@@ -13,6 +12,11 @@ public class HUD {
     public void reset() {
         score = 0;
         lives = 3;
+    }
+
+    // trong lớp HUD
+    public void addLife() {
+        this.lives++;
     }
 
     public void addScore(int s) {

@@ -1,11 +1,13 @@
 package com.nhom_4.arkanoid.util;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 import com.nhom_4.arkanoid.gfx.Assets;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -36,6 +38,15 @@ public class Files {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static Image loadImage(String path) {
+        File f = new File(path);
+        if (!f.exists()) {
+            System.err.println("LỖI NGHIÊM TRỌNG: File không tồn tại tại đường dẫn: " + f.getAbsolutePath());
+            System.exit(1);
+        }
+        return new ImageIcon(f.getAbsolutePath()).getImage();
     }
 
     public static Font loadFont(String cpPath, int style, float size) {

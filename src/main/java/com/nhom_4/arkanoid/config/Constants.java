@@ -17,15 +17,15 @@ public final class Constants {
     // Tường
     public static final int WALL_THICK = 8;
     public static final int TOP_WALL = 20;
-    public static final int TOP_OFFSET = 70; // top area cho gạch
+    public static final double TOP_OFFSET = TOP_WALL + 5;
 
     // Paddle
-    public static final double PADDLE_WIDTH = 110;
-    public static final double PADDLE_HEIGHT = 16;
+    public static final double PADDLE_WIDTH = 100;
+    public static final double PADDLE_HEIGHT = 20;
     public static final double PADDLE_SPEED = 520;
 
     // Ball
-    public static final double BALL_RADIUS = 8;
-    public static final double BALL_SPEED_CAP = 680;
-    public static final double BALL_SPEEDUP_MUL = 1.02;// tăng 2% tốc độ mỗi lần va chạm
+    public static final double BALL_RADIUS = 9;
+    public static final double BALL_SPEED_CAP = 700;
+    public static final double BALL_SPEEDUP_MUL = 1.015;// tăng 2% tốc độ mỗi lần va chạm
 }

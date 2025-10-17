@@ -1,53 +1,75 @@
 package com.nhom_4.arkanoid.entity;
 
-import java.awt.*;
-import java.awt.geom.*;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.geom.Rectangle2D;
 
 public class Brick extends Entity {
-    private int hp;
-    private Color color;
 
-    public Brick(double x, double y, double w, double h, int hp) {
+    private int health;
+    private final Image brickImage; // Biến để lưu ảnh cho viên gạch
+
+    /**
+     * Constructor mới: Nhận trực tiếp một đối tượng Image
+     * đã được tải sẵn từ lớp Assets.
+     */
+    public Brick(double x, double y, double w, double h, int health, Image image) {
         this.x = x;
         this.y = y;
         this.w = w;
         this.h = h;
-        this.hp = hp;
-        this.color = pick(hp);
-    }
-
-    public boolean isAlive() {
-        return hp > 0;
-    }
-
-    public boolean hit() {
-        hp--;
-        color = pick(Math.max(hp, 0));
-        return hp <= 0;
-    }
-
-    private Color pick(int p) {
-        switch (p) {
-            case 3:
-                return new Color(255, 90, 90);
-            case 2:
-                return new Color(255, 160, 80);
-            case 1:
-                return new Color(120, 200, 255);
-            default:
-                return new Color(60, 70, 90, 100);
-        }
-    }
-
-    @Override
-    public void update(double dt) {
+        this.health = health;
+        this.brickImage = image; // Gán trực tiếp ảnh đã được tải
     }
 
     @Override
     public void render(Graphics2D g) {
-        g.setColor(color);
-        g.fill(new RoundRectangle2D.Double(x, y, w, h, 8, 8));
-        g.setColor(new Color(255, 255, 255, 40));
-        g.draw(new RoundRectangle2D.Double(x + 1, y + 1, w - 2, h - 2, 8, 8));
+        // Luôn vẽ hình ảnh vì mỗi viên gạch khi được tạo ra đều sẽ có một ảnh
+        if (isAlive()) {
+            g.drawImage(brickImage, (int) x, (int) y, (int) w, (int) h, null);
+        }
+    }
+
+    // --- CÁC PHƯƠNG THỨC KHÁC ---
+
+    public boolean isAlive() {
+        return health > 0;
+    }
+
+    /**
+     * Giảm độ cứng của gạch đi 1.
+     * 
+     * @return true nếu gạch bị phá hủy, false nếu chưa.
+     */
+    public boolean hit() {
+        if (health < 9) { // Giả sử 9 là gạch không thể phá hủy
+            health--;
+        }
+        return health <= 0;
+    }
+
+    /**
+     * Phá hủy viên gạch ngay lập tức.
+     */
+    public void destroy() {
+        this.health = 0;
+    }
+
+    public double centerX() {
+        return x + w / 2.0;
+    }
+
+    public double centerY() {
+        return y + h / 2.0;
+    }
+
+    @Override
+    public Rectangle2D.Double getRect() {
+        return new Rectangle2D.Double(x, y, w, h);
+    }
+
+    @Override
+    public void update(double dt) {
+        /* Gạch không cần update vị trí */
     }
 }
