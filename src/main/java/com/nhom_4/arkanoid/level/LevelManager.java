@@ -2,22 +2,15 @@ package com.nhom_4.arkanoid.level;
 
 public class LevelManager {
     private int index = 0;
-    private final int total = 6; // 3 mẫu * 2 vòng lặp
+    private final int total = 10; // số màn chơi tối đa (tùy chỉnh)
 
     public void reset() {
         index = 0;
     }
 
     public Level getCurrentLevel() {
-        int pick = index % 3;
-        switch (pick) {
-            case 1:
-                return new Level(LevelLoader.diagonal());
-            case 2:
-                return new Level(LevelLoader.checker());
-            default:
-                return new Level(LevelLoader.full());
-        }
+        // mỗi lần gọi → sinh map ngẫu nhiên
+        return new Level(LevelLoader.randomLevel());
     }
 
     public boolean nextLevel() {
