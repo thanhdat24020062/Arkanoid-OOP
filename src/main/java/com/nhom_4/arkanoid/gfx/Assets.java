@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.image.BufferedImage;
 
 public class Assets {
+    public static BufferedImage EXIT_DIALOG;
     public static BufferedImage MENU_BG;
     public static BufferedImage PADDLE;
     public static BufferedImage BUTTON_START;
@@ -16,12 +17,11 @@ public class Assets {
     public static Font fontPixels_44;
 
     public static void load() {
-        MENU_BG = Files.loadImageCP("/resources/images/menu_bg.png",Constants.WIDTH, Constants.HEIGHT);
-        // PADDLE=Files.loadImageCP("/resources/images/paddle.png");
-        BUTTON_START=Files.loadImageCP("/resources/images/button_menu.png",1200,600);
-        BUTTON_HOW_TO_PLAY=Files.loadImageCP("/resources/images/button_menu.png",2300,600);
-        BUTTON_EXIT=Files.loadImageCP("/resources/images/button_menu.png",1000,600);
-
+        MENU_BG = Files.loadImageCP("/resources/images/menu_bg.png", Constants.WIDTH, Constants.HEIGHT);
+        BUTTON_START = Files.loadImageCP("/resources/images/button_menu.png", 240, 120);
+        BUTTON_HOW_TO_PLAY = Files.loadImageCP("/resources/images/button_menu.png", 460, 120);
+        BUTTON_EXIT = Files.loadImageCP("/resources/images/button_menu.png", 200, 120);
+        //load font chữ
         fontPixels_40 = Files.loadFont("/resources/fonts/font1.ttf", 0, 40);
         fontPixels_44 = Files.loadFont("/resources/fonts/font1.ttf", 0, 44);
 

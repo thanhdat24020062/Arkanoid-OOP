@@ -69,6 +69,7 @@ public final class Renderer {
         return drawButtonInMenu(g, bg, text, centerX, centerY, font, mousePos, 1.0f, 1.06f);
     }
 
+
     // Bản có scale khi hover (phóng nhẹ để “có hồn”)
     // Giữ nguyên import/đầu hàm của bạn
     public static Rectangle drawButtonInMenu(Graphics2D g,
@@ -155,5 +156,6 @@ public final class Renderer {
 
         return new Rectangle(x, y, w, h);
     }
+
 
 }
