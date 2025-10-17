@@ -48,10 +48,5 @@ public class Screens {
         g.setStroke(oldStroke);
     }
 
-    public void drawCenterText(Graphics2D g, String title, String sub) {
-        g.setColor(new Color(255, 255, 255, 230));
-        Renderer.drawCenteredString(g, title, Constants.HEIGHT / 2 - 20, big, g.getColor());
-        g.setColor(Color.WHITE);
-        Renderer.drawCenteredString(g, sub, Constants.HEIGHT / 2 + 12, small, g.getColor());
-    }
+   
 }
