@@ -1,7 +1,8 @@
 package com.nhom_4.arkanoid.entity;
 
+import com.nhom_4.arkanoid.gfx.Assets; // <-- Thêm import này
 import java.awt.*;
-import java.awt.geom.*;
+import java.awt.geom.Rectangle2D;
 import java.util.Random;
 
 public class Ball extends Entity {
@@ -18,8 +19,34 @@ public class Ball extends Entity {
         this.w = this.h = r * 2;
     }
 
+    @Override
+    public void render(Graphics2D g) {
+        // Lấy ảnh bóng trực tiếp từ "nhà kho" Assets để vẽ
+        g.drawImage(Assets.ball, (int) (x - r), (int) (y - r), (int) (r * 2), (int) (r * 2), null);
+
+        // Vẽ thêm hiệu ứng lửa nếu cần
+        if (isFireball) {
+            g.setColor(new Color(255, 100, 0, 100)); // Màu cam, hơi trong suốt
+            g.fillOval((int) (x - r - 2), (int) (y - r - 2), (int) (r * 2) + 4, (int) (r * 2) + 4);
+        }
+    }
+
+    // --- CÁC PHƯƠNG THỨC KHÁC GIỮ NGUYÊN ---
+
+    @Override
+    public void update(double dt) {
+        x += vx * dt;
+        y += vy * dt;
+        if (isFireball) {
+            fireballTimer -= dt;
+            if (fireballTimer <= 0) {
+                deactivateFireball();
+            }
+        }
+    }
+
     public void launchRandomUp() {
-        double base = Math.toRadians(60 + rng.nextInt(60)); // 60..120 deg
+        double base = Math.toRadians(60 + rng.nextInt(60));
         vx = 260 * Math.cos(base) * (rng.nextBoolean() ? 1 : -1);
         vy = -260 * Math.sin(base);
         stickToPaddle = false;
@@ -33,32 +60,32 @@ public class Ball extends Entity {
         return stickToPaddle;
     }
 
-    public void setX(double v) {
-        this.x = v;
-    }
-
-    public void setY(double v) {
-        this.y = v;
-    }
-
     public double getX() {
         return x;
+    }
+
+    public void setX(double v) {
+        this.x = v;
     }
 
     public double getY() {
         return y;
     }
 
+    public void setY(double v) {
+        this.y = v;
+    }
+
     public double getVx() {
         return vx;
     }
 
-    public double getVy() {
-        return vy;
-    }
-
     public void setVx(double v) {
         vx = v;
+    }
+
+    public double getVy() {
+        return vy;
     }
 
     public void setVy(double v) {
@@ -67,31 +94,6 @@ public class Ball extends Entity {
 
     public double getR() {
         return r;
-    }
-
-    // Trong file Ball.java
-
-    public void speedUp(double mul, double cap) {
-        // Tăng vận tốc hiện tại
-        vx *= mul;
-        vy *= mul;
-
-        // Ngay lập tức gọi hàm giới hạn tốc độ để đảm bảo không bị vượt quá
-        limitSpeed(cap);
-    }
-
-    public void limitSpeed(double cap) {
-        // Tính toán tốc độ hiện tại từ vx và vy
-        double currentSpeed = Math.hypot(vx, vy);
-
-        // Nếu tốc độ hiện tại vượt quá giới hạn
-        if (currentSpeed > cap) {
-            // Tìm tỉ lệ cần giảm xuống
-            double factor = cap / currentSpeed;
-            // Giảm vx và vy theo đúng tỉ lệ đó
-            vx *= factor;
-            vy *= factor;
-        }
     }
 
     public void activateFireball(double duration) {
@@ -104,43 +106,51 @@ public class Ball extends Entity {
         this.fireballTimer = 0;
     }
 
+    public Ball cloneAndLaunch(double angleOffset) {
+        // Tạo một quả bóng mới tại đúng vị trí của bóng cũ
+        Ball clone = new Ball(this.x, this.y, this.r);
+
+        // Tính góc hiện tại
+        double currentAngle = Math.toDegrees(Math.atan2(-this.vy, this.vx));
+        // Tính góc mới
+        double newAngle = Math.toRadians(currentAngle + angleOffset);
+        // Tính tốc độ hiện tại
+        double speed = Math.hypot(this.vx, this.vy);
+
+        // Đặt vận tốc mới cho quả bóng clone
+        clone.setVx(speed * Math.cos(newAngle));
+        clone.setVy(-speed * Math.sin(newAngle));
+        clone.stickToPaddle(false);
+
+        // Nếu bóng gốc là bóng lửa, bóng clone cũng là bóng lửa
+        if (this.isFireball) {
+            clone.activateFireball(this.fireballTimer);
+        }
+
+        return clone;
+    }
+
     public boolean isFireball() {
         return this.isFireball;
     }
 
-    @Override
-    public void update(double dt) {
-        // 1. Cập nhật vị trí như bình thường
-        x += vx * dt;
-        y += vy * dt;
-
-        // 2. Thêm logic đếm ngược thời gian cho bóng lửa
-        if (isFireball) {
-            // Trừ đi thời gian đã trôi qua (dt) từ bộ đếm
-            fireballTimer -= dt;
-
-            // Nếu bộ đếm hết giờ, tắt hiệu ứng bóng lửa
-            if (fireballTimer <= 0) {
-                deactivateFireball();
-            }
-        }
+    public void speedUp(double mul, double cap) {
+        vx *= mul;
+        vy *= mul;
+        limitSpeed(cap);
     }
 
-    @Override
-    public void render(Graphics2D g) {
-        g.setColor(new Color(255, 245, 180));
-        if (isFireball) {
-            g.setColor(new Color(255, 100, 0)); // Màu cam đỏ
-        } else {
-            g.setColor(new Color(255, 245, 180)); // Màu gốc
+    public void limitSpeed(double cap) {
+        double currentSpeed = Math.hypot(vx, vy);
+        if (currentSpeed > cap) {
+            double factor = cap / currentSpeed;
+            vx *= factor;
+            vy *= factor;
         }
-        g.fill(new Ellipse2D.Double(x - r, y - r, r * 2, r * 2));
     }
 
     @Override
     public Rectangle2D.Double getRect() {
-        // Tọa độ góc trên bên trái là (x - r, y - r)
-        // Chiều rộng và chiều cao là (2 * r)
         return new Rectangle2D.Double(x - r, y - r, 2 * r, 2 * r);
     }
 }

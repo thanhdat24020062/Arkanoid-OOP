@@ -1,66 +1,56 @@
 package com.nhom_4.arkanoid.entity;
 
 import com.nhom_4.arkanoid.config.Constants;
+import com.nhom_4.arkanoid.gfx.Assets; // <-- 1. Thêm import này
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.ImageIcon; // Cần import này
-
 public class Paddle extends Entity {
     private double speed;
-    private Image paddleImage; // Biến để lưu hình ảnh của paddle
+
+    // --- Các biến cho trạng thái súng laser ---
     private boolean hasLasers = false;
     private double laserTimer = 0;
-    private double shootCooldown = 0; // Thời gian chờ giữa mỗi phát bắn
-
-    public void activateLasers(double duration) {
-        this.hasLasers = true;
-        this.laserTimer = duration;
-    }
-
-    public void deactivateLasers() {
-        this.hasLasers = false;
-        this.laserTimer = 0;
-    }
-
-    public boolean hasLasers() {
-        return this.hasLasers;
-    }
+    private double shootCooldown = 0;
 
     public Paddle(double x, double y, double w, double h, double speed) {
         this.x = x;
         this.y = y;
-        this.w = w; // Chiều rộng paddle sẽ được lấy từ Constants
-        this.h = h; // Chiều cao paddle sẽ được lấy từ Constants
+        this.w = w;
+        this.h = h;
         this.speed = speed;
-
-        // Tải hình ảnh khi khởi tạo paddle
-        loadImage("res/images/paddle.png"); // <--- Thay đổi đường dẫn đến file ảnh của bạn
-    }
-
-    // Hàm để tải hình ảnh từ đường dẫn
-    private void loadImage(String imagePath) {
-        ImageIcon ii = new ImageIcon(imagePath);
-        paddleImage = ii.getImage();
     }
 
     @Override
-    public void update(double dt) {
+    public void render(Graphics2D g) {
+        // 4. Lấy ảnh paddle trực tiếp từ "nhà kho" Assets để vẽ
+        g.drawImage(Assets.paddle, (int) x, (int) y, (int) w, (int) h, null);
 
+        // Vẽ thêm súng nếu có
+        if (hasLasers) {
+            g.setColor(Color.DARK_GRAY);
+            g.fillRect((int) this.x, (int) this.y - 5, 10, 5); // Súng trái
+            g.fillRect((int) (this.x + this.w - 10), (int) this.y - 5, 10, 5); // Súng phải
+        }
     }
+
+    // --- CÁC PHƯƠNG THỨC KHÁC GIỮ NGUYÊN ---
 
     public void update(double dt, double dir) {
         x += dir * speed * dt;
 
+        // Giữ paddle trong màn hình
         if (x < Constants.WALL_THICK) {
             x = Constants.WALL_THICK;
         }
         if (x + w > Constants.WIDTH - Constants.WALL_THICK) {
             x = Constants.WIDTH - Constants.WALL_THICK - w;
         }
+
+        // Cập nhật trạng thái súng
         if (hasLasers) {
             laserTimer -= dt;
             if (laserTimer <= 0) {
@@ -74,37 +64,29 @@ public class Paddle extends Entity {
 
     public List<Bullet> shoot() {
         if (hasLasers && shootCooldown <= 0) {
-            // Reset cooldown
             shootCooldown = 0.3; // Bắn mỗi 0.3 giây
 
             List<Bullet> bullets = new ArrayList<>();
-            // Tạo viên đạn bên trái
-            bullets.add(new Bullet(this.x + 5, this.y));
-            // Tạo viên đạn bên phải
-            bullets.add(new Bullet(this.x + this.w - 5, this.y));
+            bullets.add(new Bullet(this.x + 5, this.y)); // Đạn trái
+            bullets.add(new Bullet(this.x + this.w - 5, this.y)); // Đạn phải
 
             return bullets;
         }
-        return null; // Không thể bắn
+        return null;
     }
 
-    @Override
-    public void render(Graphics2D g) {
-        // Thay vì vẽ hình chữ nhật, chúng ta vẽ hình ảnh
-        if (paddleImage != null) {
-            g.drawImage(paddleImage, (int) x, (int) y, (int) w, (int) h, null);
-        } else {
-            // Nếu không tải được ảnh, fallback về vẽ hình chữ nhật màu
-            g.setColor(new Color(200, 220, 255));
-            g.fill(new Rectangle2D.Double(x, y, w, h));
-        }
-        if (hasLasers) {
-            g.setColor(Color.DARK_GRAY);
-            // Súng trái
-            g.fillRect((int) this.x, (int) this.y - 5, 10, 5);
-            // Súng phải
-            g.fillRect((int) (this.x + this.w - 10), (int) this.y - 5, 10, 5);
-        }
+    public void activateLasers(double duration) {
+        this.hasLasers = true;
+        this.laserTimer = duration;
+    }
+
+    public void deactivateLasers() {
+        this.hasLasers = false;
+        this.laserTimer = 0;
+    }
+
+    public boolean hasLasers() {
+        return this.hasLasers;
     }
 
     @Override
@@ -121,12 +103,10 @@ public class Paddle extends Entity {
         this.w = w;
         this.x = currentCenterX - this.w / 2.0;
 
-        if (x < Constants.WALL_THICK) {
+        if (x < Constants.WALL_THICK)
             x = Constants.WALL_THICK;
-        }
-        if (x + this.w > Constants.WIDTH - Constants.WALL_THICK) {
+        if (x + this.w > Constants.WIDTH - Constants.WALL_THICK)
             x = Constants.WIDTH - Constants.WALL_THICK - this.w;
-        }
     }
 
     public void setX(double v) {
@@ -136,4 +116,8 @@ public class Paddle extends Entity {
     public double centerX() {
         return this.x + this.w / 2.0;
     }
+
+    @Override
+    public void update(double dt) {
+        /* Không dùng */ }
 }

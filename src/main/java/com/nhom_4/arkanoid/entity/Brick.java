@@ -3,73 +3,54 @@ package com.nhom_4.arkanoid.entity;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.Rectangle2D;
-import javax.swing.ImageIcon;
 
 public class Brick extends Entity {
 
     private int health;
-    private Image brickImage;
+    private final Image brickImage; // Biến để lưu ảnh cho viên gạch
 
-    // Constructor mới: nhận thêm đường dẫn ảnh
-    public Brick(double x, double y, double w, double h, int health, String imagePath) {
+    /**
+     * Constructor mới: Nhận trực tiếp một đối tượng Image
+     * đã được tải sẵn từ lớp Assets.
+     */
+    public Brick(double x, double y, double w, double h, int health, Image image) {
         this.x = x;
         this.y = y;
         this.w = w;
         this.h = h;
         this.health = health;
-        loadImage(imagePath);
-    }
-
-    // Constructor cũ hơn (không có ảnh, chỉ có health)
-    // Dùng cho các level cũ nếu bạn chưa muốn thêm ảnh
-    public Brick(double x, double y, double w, double h, int health) {
-        this.x = x;
-        this.y = y;
-        this.w = w;
-        this.h = h;
-        this.health = health;
-        this.brickImage = null; // Không có ảnh
-    }
-
-    private void loadImage(String path) {
-        try {
-            ImageIcon ii = new ImageIcon(path);
-            this.brickImage = ii.getImage();
-        } catch (Exception e) {
-            System.err.println("Không thể tải ảnh gạch: " + path);
-            this.brickImage = null;
-        }
+        this.brickImage = image; // Gán trực tiếp ảnh đã được tải
     }
 
     @Override
     public void render(Graphics2D g) {
+        // Luôn vẽ hình ảnh vì mỗi viên gạch khi được tạo ra đều sẽ có một ảnh
         if (isAlive()) {
-            if (brickImage != null) {
-                g.drawImage(brickImage, (int) x, (int) y, (int) w, (int) h, null);
-            } else {
-                // Vẽ màu dự phòng nếu không có ảnh
-                // Dựa trên health
-                if (health > 2)
-                    g.setColor(java.awt.Color.GRAY);
-                else if (health > 1)
-                    g.setColor(java.awt.Color.ORANGE);
-                else
-                    g.setColor(java.awt.Color.CYAN);
-                g.fillRect((int) x, (int) y, (int) w, (int) h);
-            }
+            g.drawImage(brickImage, (int) x, (int) y, (int) w, (int) h, null);
         }
     }
+
+    // --- CÁC PHƯƠNG THỨC KHÁC ---
 
     public boolean isAlive() {
         return health > 0;
     }
 
+    /**
+     * Giảm độ cứng của gạch đi 1.
+     * 
+     * @return true nếu gạch bị phá hủy, false nếu chưa.
+     */
     public boolean hit() {
-        if (health < 9)
+        if (health < 9) { // Giả sử 9 là gạch không thể phá hủy
             health--;
+        }
         return health <= 0;
     }
 
+    /**
+     * Phá hủy viên gạch ngay lập tức.
+     */
     public void destroy() {
         this.health = 0;
     }
@@ -89,5 +70,6 @@ public class Brick extends Entity {
 
     @Override
     public void update(double dt) {
-        /* Gạch không cần update */ }
+        /* Gạch không cần update vị trí */
+    }
 }

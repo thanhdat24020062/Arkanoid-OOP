@@ -47,7 +47,7 @@ public class PowerUp {
                 text = "F";
             case LASER_PADDLE:
                 text = "S";
-                break; // <-- Thêm dòng này
+                break;
         }
         FontMetrics fm = g.getFontMetrics();
         int textWidth = fm.stringWidth(text);
@@ -64,6 +64,8 @@ public class PowerUp {
                 return Color.RED;
             case LASER_PADDLE:
                 return Color.MAGENTA;
+            case MULTI_BALL:
+                return Color.CYAN;
             default:
                 return Color.GRAY;
         }

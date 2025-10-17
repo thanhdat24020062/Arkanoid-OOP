@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.awt.Image;
 
 import com.nhom_4.arkanoid.config.Constants;
 import com.nhom_4.arkanoid.entity.Ball;
@@ -13,6 +14,7 @@ import com.nhom_4.arkanoid.entity.Brick;
 import com.nhom_4.arkanoid.entity.Bullet;
 import com.nhom_4.arkanoid.entity.Paddle;
 import com.nhom_4.arkanoid.entity.PowerUpManager;
+import com.nhom_4.arkanoid.gfx.Assets;
 import com.nhom_4.arkanoid.input.KeyInput;
 import com.nhom_4.arkanoid.physics.Collision;
 import com.nhom_4.arkanoid.physics.Resolver;
@@ -47,39 +49,42 @@ public class Game {
 
         // Map 1: Một vài hàng gạch
         levelMaps.add(new int[][] {
-                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-                { 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2 },
-                { 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1 },
-                { 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2 },
-                { 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2 },
-                { 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2 },
+                { 0, 0, 1, 1, 2, 2, 2, 1, 1, 2, 2, 2, 1, 1, 0, 0 },
+                { 0, 1, 2, 1, 0, 0, 1, 2, 2, 1, 0, 0, 1, 2, 1, 0 },
+                { 1, 2, 1, 2, 1, 1, 0, 0, 0, 0, 1, 1, 2, 1, 2, 1 },
+                { 1, 2, 0, 2, 2, 2, 1, 0, 0, 1, 2, 2, 2, 0, 2, 1 },
+                { 1, 2, 0, 1, 1, 2, 2, 1, 1, 2, 2, 1, 1, 0, 2, 1 },
+                { 1, 2, 1, 1, 0, 0, 1, 2, 2, 1, 0, 0, 1, 1, 2, 1 },
+                { 0, 1, 2, 2, 1, 0, 0, 1, 1, 0, 0, 1, 2, 2, 1, 0 },
+                { 0, 0, 1, 1, 2, 1, 1, 0, 0, 1, 1, 2, 1, 1, 0, 0 }
         });
 
         // Map 2: Map bàn cờ
         levelMaps.add(new int[][] {
-                { 9, 0, 2, 0, 2, 0, 2, 0, 2, 0, 9, 0 },
-                { 0, 9, 0, 1, 0, 1, 0, 1, 0, 9, 0, 9 },
-                { 9, 0, 2, 0, 2, 0, 2, 0, 2, 0, 9, 0 },
-                { 0, 9, 0, 1, 0, 1, 0, 1, 0, 9, 0, 9 },
+                { 0, 0, 1, 1, 2, 2, 2, 1, 1, 2, 2, 2, 1, 1, 0, 0 },
+                { 0, 1, 2, 1, 0, 2, 1, 2, 2, 1, 2, 0, 1, 2, 1, 0 },
+                { 1, 2, 1, 2, 1, 0, 1, 2, 2, 1, 0, 1, 2, 1, 2, 1 },
+                { 1, 2, 2, 1, 0, 1, 2, 2, 2, 2, 1, 0, 1, 2, 2, 1 },
+                { 1, 2, 2, 1, 0, 1, 2, 2, 2, 2, 1, 0, 1, 2, 2, 1 },
+                { 1, 2, 1, 2, 1, 0, 1, 2, 2, 1, 0, 1, 2, 1, 2, 1 },
+                { 0, 1, 2, 1, 0, 2, 1, 2, 2, 1, 2, 0, 1, 2, 1, 0 },
+                { 0, 0, 1, 1, 2, 2, 2, 1, 1, 2, 2, 2, 1, 1, 0, 0 }
         });
     }
 
+    // Trong file Game.java
+
+    // Trong file Game.java
     private List<Brick> spawnBricksForCurrentLevel() {
         List<Brick> newBricks = new ArrayList<>();
         int[][] currentMap = levelMaps.get(currentLevelIndex);
-
-        List<String> brickImagePaths = List.of(
-                "res/images/brick_blue.png",
-                "res/images/brick_cyan.png",
-                "res/images/brick_gold.png",
-                "res/images/brick_orange.png",
-                "res/images/brick_silver_2.png");
-        Random random = new Random();
 
         double playableWidth = Constants.WIDTH - (2 * Constants.WALL_THICK);
         int numColumns = currentMap[0].length;
         double brickWidth = playableWidth / numColumns;
         double brickHeight = brickWidth / 2.5;
+
+        Random random = new Random();
 
         for (int i = 0; i < currentMap.length; i++) {
             for (int j = 0; j < currentMap[i].length; j++) {
@@ -90,9 +95,11 @@ public class Game {
                 double brickX = Constants.WALL_THICK + j * brickWidth;
                 double brickY = Constants.TOP_OFFSET + i * brickHeight;
 
-                String randomImagePath = brickImagePaths.get(random.nextInt(brickImagePaths.size()));
+                // Lấy một đối tượng Image đã được tải sẵn từ "kho" Assets
+                Image randomBrickImage = Assets.bricks.get(random.nextInt(Assets.bricks.size()));
 
-                newBricks.add(new Brick(brickX, brickY, brickWidth, brickHeight, health, randomImagePath));
+                // Đưa trực tiếp đối tượng Image đó cho Brick mới
+                newBricks.add(new Brick(brickX, brickY, brickWidth, brickHeight, health, randomBrickImage));
             }
         }
         return newBricks;

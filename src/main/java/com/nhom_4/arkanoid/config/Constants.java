@@ -7,8 +7,8 @@ public final class Constants {
     }
 
     // Màn hình
-    public static final int WIDTH = 800;
-    public static final int HEIGHT = 600;
+    public static final int WIDTH = 1200;
+    public static final int HEIGHT = 800;
     public static final Color BG_COLOR = new Color(255, 255, 255);// Màu nền
 
     // Loop
@@ -20,12 +20,12 @@ public final class Constants {
     public static final double TOP_OFFSET = TOP_WALL + 5;
 
     // Paddle
-    public static final double PADDLE_WIDTH = 85;
-    public static final double PADDLE_HEIGHT = 16;
+    public static final double PADDLE_WIDTH = 100;
+    public static final double PADDLE_HEIGHT = 20;
     public static final double PADDLE_SPEED = 520;
 
     // Ball
-    public static final double BALL_RADIUS = 8;
-    public static final double BALL_SPEED_CAP = 680;
-    public static final double BALL_SPEEDUP_MUL = 1.01;// tăng 2% tốc độ mỗi lần va chạm
+    public static final double BALL_RADIUS = 9;
+    public static final double BALL_SPEED_CAP = 700;
+    public static final double BALL_SPEEDUP_MUL = 1.015;// tăng 2% tốc độ mỗi lần va chạm
 }
