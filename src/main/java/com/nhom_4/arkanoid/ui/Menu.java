@@ -178,54 +178,55 @@ public class Menu {
         }
     }
 
-    /** Vẽ overlay Exit? với 2 nút YES / NO */
     private void drawExitConfirm(Graphics2D g, MouseInput mouseInput) {
         // nền mờ
         g.setColor(new Color(0, 0, 0, 160));
         g.fillRect(0, 0, Constants.WIDTH, Constants.HEIGHT);
 
-        int cw = Constants.WIDTH / 2;
-        int ch = Constants.HEIGHT / 2;
+        BufferedImage img = Assets.EXIT_DIALOG; // bạn đã load 900x600
+        if (img == null)
+            return; // nếu thiếu ảnh thì thôi
 
-        int panelW = 640;
-        int panelH = 300;
-        int px = cw - panelW / 2;
-        int py = ch - panelH / 2;
-        exitPanel.setBounds(px, py, panelW, panelH);
+        // === Vẽ THEO KÍCH THƯỚC ẢNH GỐC (không scale) ===
+        final int iw = img.getWidth(); // ví dụ 900
+        final int ih = img.getHeight(); // ví dụ 600
+        final int px = Constants.WIDTH / 2 - iw / 2;
+        final int py = Constants.HEIGHT / 2 - ih / 2;
+        g.drawImage(img, px, py, null);
 
-        // khung phong cách sci-fi đơn giản
-        g.setColor(new Color(6, 18, 34, 230));
-        g.fillRoundRect(px, py, panelW, panelH, 20, 20);
-        g.setStroke(new BasicStroke(4f));
-        g.setColor(new Color(0, 255, 255, 140));
-        g.drawRoundRect(px + 6, py + 6, panelW - 12, panelH - 12, 16, 16);
-        g.setFont(Assets.fontPixels_40 != null ? Assets.fontPixels_40.deriveFont(44f) : titleFont.deriveFont(44f));
-        FontMetrics fm = g.getFontMetrics();
-        String text = "EXIT?";
-        int tx = cw - fm.stringWidth(text) / 2;
-        int ty = py + 120 + (fm.getAscent() - fm.getDescent()) / 2;
-        // viền chữ (stroke)
-        g.setColor(Color.BLACK);
-        g.drawString(text, tx + 2, ty + 2);
-        g.setColor(Color.WHITE);
-        g.drawString(text, tx, ty);
-        // hai nút YES / NO
+        // vùng click tổng của panel
+        exitPanel.setBounds(px, py, iw, ih);
+
         Point mousePos = mouseInput.getPosition();
-        int by = py + panelH - 70;
-        int yesCx = cw - 110;
-        int noCx = cw + 110;
-
-        BufferedImage smallBtn = Assets.BUTTON_START;
 
         Rectangle rYes = Renderer.drawButtonInMenu(
-                g, smallBtn, "YES", yesCx, by,
-                Assets.fontPixels_40 != null ? Assets.fontPixels_40 : itemFont,
-                mousePos, 0.8f, 0.8f * 1.06f);
+                    g,
+                    Assets.BUTTON_SMALL,
+                    "YES",
+                    Constants.WIDTH / 2-110,
+                    Constants.HEIGHT/2+60,
+                    Assets.fontPixels_40 != null ? Assets.fontPixels_40 : titleFont,
+                    mousePos,
+                    1.00f,
+                    1.06f);
         Rectangle rNo = Renderer.drawButtonInMenu(
-                g, smallBtn, "NO", noCx, by,
-                Assets.fontPixels_40 != null ? Assets.fontPixels_40 : itemFont,
-                mousePos, 0.8f, 0.8f * 1.06f);
+                    g,
+                    Assets.BUTTON_SMALL,
+                    "NO",
+                    Constants.WIDTH / 2+100,
+                    Constants.HEIGHT/2+60,
+                    Assets.fontPixels_40 != null ? Assets.fontPixels_40 : titleFont,
+                    mousePos,
+                    1.00f,
+                    1.06f);
         yesBtn.setBounds(rYes);
         noBtn.setBounds(rNo);
+
+        // panel tổng + 2 nút (để click ra ngoài mới đóng)
+        Rectangle union = new Rectangle(px, py, iw, ih);
+        union.add(rYes);
+        union.add(rNo);
+        exitPanel.setBounds(union);
     }
+
 }

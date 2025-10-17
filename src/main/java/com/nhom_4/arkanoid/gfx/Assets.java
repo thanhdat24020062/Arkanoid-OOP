@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.image.BufferedImage;
 
 public class Assets {
+    public static BufferedImage BUTTON_SMALL = null;
     public static BufferedImage EXIT_DIALOG;
     public static BufferedImage MENU_BG;
     public static BufferedImage PADDLE;
@@ -21,6 +22,8 @@ public class Assets {
         BUTTON_START = Files.loadImageCP("/resources/images/button_menu.png", 240, 120);
         BUTTON_HOW_TO_PLAY = Files.loadImageCP("/resources/images/button_menu.png", 460, 120);
         BUTTON_EXIT = Files.loadImageCP("/resources/images/button_menu.png", 200, 120);
+        BUTTON_SMALL=Files.loadImageCP("/resources/images/button_menu.png", 150, 90);
+        EXIT_DIALOG=Files.loadImageCP("/resources/images/exit.png", 900, 600);
         //load font chữ
         fontPixels_40 = Files.loadFont("/resources/fonts/font1.ttf", 0, 40);
         fontPixels_44 = Files.loadFont("/resources/fonts/font1.ttf", 0, 44);
