@@ -4,6 +4,7 @@ import javax.swing.*;
 
 import com.nhom_4.arkanoid.config.Constants;
 import com.nhom_4.arkanoid.input.KeyInput;
+import com.nhom_4.arkanoid.input.MouseInput;
 
 import java.awt.*;
 
@@ -12,6 +13,7 @@ public class GamePanel extends JPanel implements Runnable {
     private boolean running = false;
     private final Game game = new Game();
     private final KeyInput keys = new KeyInput();
+    private final MouseInput mouse = new MouseInput();
 
     public GamePanel() {
         setPreferredSize(new Dimension(Constants.WIDTH, Constants.HEIGHT));
@@ -19,6 +21,10 @@ public class GamePanel extends JPanel implements Runnable {
         setFocusable(true);
         addKeyListener(keys);
         game.bindInput(keys);
+        
+        game.bindInput(mouse);
+        addMouseListener(mouse);
+        addMouseMotionListener(mouse); // nếu muốn hover sau này
         start();
     }
 
@@ -63,5 +69,12 @@ public class GamePanel extends JPanel implements Runnable {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         game.render((Graphics2D) g);
+    }
+
+    // đảm bảo có focus sau khi add vào JFrame
+    @Override
+    public void addNotify() {
+        super.addNotify();
+        requestFocusInWindow();
     }
 }
