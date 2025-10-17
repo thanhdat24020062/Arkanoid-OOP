@@ -1,0 +1,11 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "copy-resources-windows",
+      "type": "shell",
+      "command": "powershell -ExecutionPolicy Bypass -Command \"New-Item -ItemType Directory -Force bin | Out-Null; if (Test-Path src/main/resources) { Copy-Item -Recurse -Force src/main/resources/* bin/ }\"",
+      "problemMatcher": []
+    }
+  ]
+}

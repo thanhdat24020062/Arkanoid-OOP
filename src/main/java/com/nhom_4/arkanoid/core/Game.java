@@ -32,7 +32,7 @@ public class Game {
     private final Menu menu = new Menu();
     private final PowerUpManager powerUpManager = new PowerUpManager();
     private final List<Bullet> bullets = new ArrayList<>();
-    
+
     // --- LOGIC LEVEL ĐƠN GIẢN HÓA ---
     private List<int[][]> levelMaps;
     private int currentLevelIndex;
@@ -43,7 +43,7 @@ public class Game {
     private List<Brick> bricks;
     private KeyInput keys;
     private MouseInput mouse;
- private boolean showPressSpace = true;
+    private boolean showPressSpace = true;
 
     public void setFps(int fps) {
         hud.setFps(fps);
@@ -56,6 +56,7 @@ public class Game {
     public void bindInput(MouseInput m) {
         this.mouse = m;
     }
+
     public Game() {
         loadAllLevelMaps(); // Tải tất cả các map khi khởi tạo
         startNewGame();
@@ -197,9 +198,9 @@ public class Game {
             ball.setX(paddle.centerX());
             ball.setY(paddle.getY() - ball.getR() - 2);
             if (keys.consumeSpace()) {
-                        ball.launchRandomUp();
-                        showPressSpace = false;// ẩn showPressSpace
-                    }
+                ball.launchRandomUp();
+                showPressSpace = false;// ẩn showPressSpace
+            }
         } else {
             if (paddle.hasLasers()) {
                 List<Bullet> newBullets = paddle.shoot();
@@ -328,14 +329,15 @@ public class Game {
     private void renderOverlay(Graphics2D g) {
         switch (state) {
             case MENU:
-               menu.render(g, mouse);
+                menu.render(g, mouse);
                 break;
             case PLAYING:
                 if (showPressSpace) {
-                    Renderer.renderText(g, "Press Space to Start", Assets.fontPixels_40,Constants.WIDTH/2-250, Constants.HEIGHT/2, Color.WHITE);
+                    Renderer.renderText(g, "Press Space to Start", Assets.fontPixels_40, Constants.WIDTH / 2 - 250,
+                            Constants.HEIGHT / 2, Color.WHITE);
                 }
-                break;        
-//Sẽ làm màn hình pause, game_over, you_win sau, cấm tk nào động vào đoạn này!
+                break;
+            // Sẽ làm màn hình pause, game_over, you_win sau, cấm tk nào động vào đoạn này!
             case PAUSED:
                 break;
             case GAME_OVER:

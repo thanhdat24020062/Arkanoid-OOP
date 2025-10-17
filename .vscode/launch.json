@@ -1,0 +1,12 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Run Arkanoid",
+      "request": "launch",
+      "mainClass": "com.nhom_4.arkanoid.App",  // ĐỔI đúng class main
+      "preLaunchTask": "copy-resources-windows"
+    }
+  ]
+}
