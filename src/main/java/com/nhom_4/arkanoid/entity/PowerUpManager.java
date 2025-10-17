@@ -1,4 +1,3 @@
-// src/com/nhom_4/arkanoid/entity/PowerUpManager.java
 package com.nhom_4.arkanoid.entity;
 
 import com.nhom_4.arkanoid.config.Constants;

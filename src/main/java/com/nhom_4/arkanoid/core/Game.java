@@ -32,18 +32,16 @@ public class Game {
     private final Menu menu = new Menu();
     private final PowerUpManager powerUpManager = new PowerUpManager();
     private final List<Bullet> bullets = new ArrayList<>();
-    
-    // --- LOGIC LEVEL ĐƠN GIẢN HÓA ---
+
     private List<int[][]> levelMaps;
     private int currentLevelIndex;
-    // ------------------------------------
 
     private Paddle paddle;
     private Ball ball;
     private List<Brick> bricks;
     private KeyInput keys;
     private MouseInput mouse;
- private boolean showPressSpace = true;
+    private boolean showPressSpace = true;
 
     public void setFps(int fps) {
         hud.setFps(fps);
@@ -56,16 +54,15 @@ public class Game {
     public void bindInput(MouseInput m) {
         this.mouse = m;
     }
+
     public Game() {
-        loadAllLevelMaps(); // Tải tất cả các map khi khởi tạo
+        loadAllLevelMaps();
         startNewGame();
     }
 
-    // --- CÁC PHƯƠNG THỨC QUẢN LÝ LEVEL MỚI ---
     private void loadAllLevelMaps() {
         levelMaps = new ArrayList<>();
 
-        // Map 1: Một vài hàng gạch
         levelMaps.add(new int[][] {
                 { 0, 0, 1, 1, 2, 2, 2, 1, 1, 2, 2, 2, 1, 1, 0, 0 },
                 { 0, 1, 2, 1, 0, 0, 1, 2, 2, 1, 0, 0, 1, 2, 1, 0 },
@@ -77,7 +74,6 @@ public class Game {
                 { 0, 0, 1, 1, 2, 1, 1, 0, 0, 1, 1, 2, 1, 1, 0, 0 }
         });
 
-        // Map 2: Map bàn cờ
         levelMaps.add(new int[][] {
                 { 0, 0, 1, 1, 2, 2, 2, 1, 1, 2, 2, 2, 1, 1, 0, 0 },
                 { 0, 1, 2, 1, 0, 2, 1, 2, 2, 1, 2, 0, 1, 2, 1, 0 },
@@ -90,9 +86,6 @@ public class Game {
         });
     }
 
-    // Trong file Game.java
-
-    // Trong file Game.java
     private List<Brick> spawnBricksForCurrentLevel() {
         List<Brick> newBricks = new ArrayList<>();
         int[][] currentMap = levelMaps.get(currentLevelIndex);
@@ -127,7 +120,6 @@ public class Game {
         currentLevelIndex++;
         return currentLevelIndex < levelMaps.size();
     }
-    // -----------------------------------------
 
     private void startNewGame() {
         hud.reset();
@@ -158,11 +150,6 @@ public class Game {
         ball.setVy(0);
         paddle.setX(Constants.WIDTH / 2.0 - paddle.getW() / 2.0);
     }
-
-    // --- PHẦN CÒN LẠI CỦA FILE GAME.JAVA ---
-    // (Toàn bộ các hàm update, render, và các hàm xử lý khác giữ nguyên như file
-    // hoàn chỉnh cuối cùng tôi đã gửi)
-    // Dưới đây là các hàm đó để bạn tiện copy & paste.
 
     public void update(double dt) {
         switch (state) {
@@ -197,9 +184,9 @@ public class Game {
             ball.setX(paddle.centerX());
             ball.setY(paddle.getY() - ball.getR() - 2);
             if (keys.consumeSpace()) {
-                        ball.launchRandomUp();
-                        showPressSpace = false;// ẩn showPressSpace
-                    }
+                ball.launchRandomUp();
+                showPressSpace = false;// ẩn showPressSpace
+            }
         } else {
             if (paddle.hasLasers()) {
                 List<Bullet> newBullets = paddle.shoot();
@@ -236,11 +223,13 @@ public class Game {
 
     private void checkWinLoseConditions() {
         if (ball.getY() - ball.getR() > Constants.HEIGHT) {
-            hud.loseLife();
-            if (hud.getLives() <= 0)
+            if (hud.getLives() <= 1) {
+                hud.loseLife();
                 state = GameState.GAME_OVER;
-            else
+            } else {
+                hud.loseLife();
                 resetAndStickBall();
+            }
         }
         if (allCleared()) {
             if (nextLevel()) {
@@ -328,21 +317,21 @@ public class Game {
     private void renderOverlay(Graphics2D g) {
         switch (state) {
             case MENU:
-               menu.render(g, mouse);
+                menu.render(g, mouse);
                 break;
             case PLAYING:
                 if (showPressSpace) {
-                    Renderer.renderText(g, "Press Space to Start", Assets.fontPixels_40,Constants.WIDTH/2-250, Constants.HEIGHT/2, Color.WHITE);
+                    Renderer.renderText(g, "Press Space to Start", Assets.fontPixels_40, Constants.WIDTH / 2 - 250,
+                            Constants.HEIGHT / 2, Color.WHITE);
                 }
-                break;        
-//Sẽ làm màn hình pause, game_over, you_win sau, cấm tk nào động vào đoạn này!
+                break;
             case PAUSED:
                 break;
             case GAME_OVER:
-
+                screens.drawCenterText(g, "GAME OVER", "Press R to restart");
                 break;
             case YOU_WIN:
-
+                screens.drawCenterText(g, "YOU WIN!", "Press R to play again");
                 break;
         }
     }
