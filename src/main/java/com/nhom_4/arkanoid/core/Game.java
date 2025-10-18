@@ -24,6 +24,7 @@ import com.nhom_4.arkanoid.physics.Collision;
 import com.nhom_4.arkanoid.physics.Resolver;
 import com.nhom_4.arkanoid.ui.HUD;
 import com.nhom_4.arkanoid.ui.Screens;
+import com.nhom_4.arkanoid.util.Pair;
 
 public class Game {
     private GameState state = GameState.MENU;
@@ -32,8 +33,8 @@ public class Game {
     private final Menu menu = new Menu();
     private final PowerUpManager powerUpManager = new PowerUpManager();
     private final List<Bullet> bullets = new ArrayList<>();
+    private List<Pair<Integer, Integer>[][]> levelMaps;
 
-    private List<int[][]> levelMaps;
     private int currentLevelIndex;
 
     private Paddle paddle;
@@ -62,55 +63,109 @@ public class Game {
 
     private void loadAllLevelMaps() {
         levelMaps = new ArrayList<>();
-
-        levelMaps.add(new int[][] {
-                { 0, 0, 1, 1, 2, 2, 2, 1, 1, 2, 2, 2, 1, 1, 0, 0 },
-                { 0, 1, 2, 1, 0, 0, 1, 2, 2, 1, 0, 0, 1, 2, 1, 0 },
-                { 1, 2, 1, 2, 1, 1, 0, 0, 0, 0, 1, 1, 2, 1, 2, 1 },
-                { 1, 2, 0, 2, 2, 2, 1, 0, 0, 1, 2, 2, 2, 0, 2, 1 },
-                { 1, 2, 0, 1, 1, 2, 2, 1, 1, 2, 2, 1, 1, 0, 2, 1 },
-                { 1, 2, 1, 1, 0, 0, 1, 2, 2, 1, 0, 0, 1, 1, 2, 1 },
-                { 0, 1, 2, 2, 1, 0, 0, 1, 1, 0, 0, 1, 2, 2, 1, 0 },
-                { 0, 0, 1, 1, 2, 1, 1, 0, 0, 1, 1, 2, 1, 1, 0, 0 }
+        levelMaps.add(new Pair[][] {
+                { new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5),
+                        new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5),
+                        new Pair(2, 5), new Pair(2, 5), new Pair(2, 5) },
+                { new Pair(1, 4), new Pair(1, 4), null, new Pair(1, 4), new Pair(1, 4), null, new Pair(1, 4),
+                        new Pair(1, 4), null, new Pair(1, 4), new Pair(1, 4), null, new Pair(1, 4), new Pair(1, 4),
+                        new Pair(1, 4) },
+                { new Pair(1, 3), null, new Pair(1, 3), new Pair(1, 3), null, new Pair(1, 3), new Pair(1, 3),
+                        new Pair(1, 3), new Pair(1, 3), new Pair(1, 3), null, new Pair(1, 3), new Pair(1, 3), null,
+                        new Pair(1, 3) },
+                { new Pair(1, 2), new Pair(1, 2), null, new Pair(1, 2), new Pair(1, 2), null, new Pair(1, 2),
+                        new Pair(1, 2), null, new Pair(1, 2), new Pair(1, 2), null, new Pair(1, 2), new Pair(1, 2),
+                        new Pair(1, 2) },
+                { new Pair(1, 1), null, new Pair(1, 1), new Pair(1, 1), null, new Pair(1, 1), new Pair(1, 1),
+                        new Pair(1, 1), new Pair(1, 1), new Pair(1, 1), null, new Pair(1, 1), new Pair(1, 1), null,
+                        new Pair(1, 1) },
+                { new Pair(1, 2), new Pair(1, 2), null, new Pair(1, 2), new Pair(1, 2), null, new Pair(1, 2),
+                        new Pair(1, 2), null, new Pair(1, 2), new Pair(1, 2), null, new Pair(1, 2), new Pair(1, 2),
+                        new Pair(1, 2) },
+                { new Pair(1, 3), null, new Pair(1, 3), new Pair(1, 3), null, new Pair(1, 3), new Pair(1, 3),
+                        new Pair(1, 3), new Pair(1, 3), new Pair(1, 3), null, new Pair(1, 3), new Pair(1, 3), null,
+                        new Pair(1, 3) },
+                { new Pair(1, 4), new Pair(1, 4), null, new Pair(1, 4), new Pair(1, 4), null, new Pair(1, 4),
+                        new Pair(1, 4), null, new Pair(1, 4), new Pair(1, 4), null, new Pair(1, 4), new Pair(1, 4),
+                        new Pair(1, 4) },
+                { new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5),
+                        new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5),
+                        new Pair(2, 5), new Pair(2, 5), new Pair(2, 5) }
         });
 
-        levelMaps.add(new int[][] {
-                { 0, 0, 1, 1, 2, 2, 2, 1, 1, 2, 2, 2, 1, 1, 0, 0 },
-                { 0, 1, 2, 1, 0, 2, 1, 2, 2, 1, 2, 0, 1, 2, 1, 0 },
-                { 1, 2, 1, 2, 1, 0, 1, 2, 2, 1, 0, 1, 2, 1, 2, 1 },
-                { 1, 2, 2, 1, 0, 1, 2, 2, 2, 2, 1, 0, 1, 2, 2, 1 },
-                { 1, 2, 2, 1, 0, 1, 2, 2, 2, 2, 1, 0, 1, 2, 2, 1 },
-                { 1, 2, 1, 2, 1, 0, 1, 2, 2, 1, 0, 1, 2, 1, 2, 1 },
-                { 0, 1, 2, 1, 0, 2, 1, 2, 2, 1, 2, 0, 1, 2, 1, 0 },
-                { 0, 0, 1, 1, 2, 2, 2, 1, 1, 2, 2, 2, 1, 1, 0, 0 }
+        levelMaps.add(new Pair[][] {
+                { new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5),
+                        new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5),
+                        new Pair(2, 5), new Pair(2, 5), new Pair(2, 5) },
+
+                { new Pair(1, 4), new Pair(1, 4), new Pair(1, 4), new Pair(1, 4), null, null, new Pair(1, 4),
+                        new Pair(1, 4), new Pair(1, 4), null, null, new Pair(1, 4), new Pair(1, 4), new Pair(1, 4),
+                        new Pair(1, 4) },
+
+                { new Pair(1, 3), null, new Pair(1, 3), null, new Pair(1, 3), new Pair(1, 3), null,
+                        new Pair(2, 2), null, new Pair(1, 3), new Pair(1, 3), null, new Pair(1, 3), null,
+                        new Pair(1, 3) },
+
+                { new Pair(1, 2), new Pair(1, 2), null, new Pair(1, 2), new Pair(1, 2), null, new Pair(1, 2),
+                        new Pair(2, 1), new Pair(1, 2), null, new Pair(1, 2), new Pair(1, 2), null, new Pair(1, 2),
+                        new Pair(1, 2) },
+
+                { new Pair(1, 1), null, new Pair(1, 1), new Pair(1, 1), null, new Pair(2, 3), new Pair(1, 1),
+                        new Pair(2, 5), new Pair(1, 1), new Pair(2, 3), null, new Pair(1, 1), new Pair(1, 1), null,
+                        new Pair(1, 1) },
+
+                { new Pair(1, 2), new Pair(1, 2), null, new Pair(1, 2), new Pair(1, 2), null, new Pair(1, 2),
+                        new Pair(2, 1), new Pair(1, 2), null, new Pair(1, 2), new Pair(1, 2), null, new Pair(1, 2),
+                        new Pair(1, 2) },
+
+                { new Pair(1, 3), null, new Pair(1, 3), null, new Pair(1, 3), new Pair(1, 3), null,
+                        new Pair(2, 2), null, new Pair(1, 3), new Pair(1, 3), null, new Pair(1, 3), null,
+                        new Pair(1, 3) },
+
+                { new Pair(1, 4), new Pair(1, 4), new Pair(1, 4), new Pair(1, 4), null, null, new Pair(1, 4),
+                        new Pair(1, 4), new Pair(1, 4), null, null, new Pair(1, 4), new Pair(1, 4), new Pair(1, 4),
+                        new Pair(1, 4) },
+
+                { new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5),
+                        new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5),
+                        new Pair(2, 5), new Pair(2, 5), new Pair(2, 5) }
         });
+
     }
 
     private List<Brick> spawnBricksForCurrentLevel() {
         List<Brick> newBricks = new ArrayList<>();
-        int[][] currentMap = levelMaps.get(currentLevelIndex);
+        Pair<Integer, Integer>[][] currentMap = levelMaps.get(currentLevelIndex);
 
         double playableWidth = Constants.WIDTH - (2 * Constants.WALL_THICK);
         int numColumns = currentMap[0].length;
         double brickWidth = playableWidth / numColumns;
         double brickHeight = brickWidth / 2.5;
 
-        Random random = new Random();
-
         for (int i = 0; i < currentMap.length; i++) {
             for (int j = 0; j < currentMap[i].length; j++) {
-                int health = currentMap[i][j];
-                if (health == 0)
+                Pair<Integer, Integer> brickData = currentMap[i][j];
+
+                // Bỏ qua nếu là khoảng trống (null)
+                if (brickData == null)
                     continue;
+
+                int health = brickData.first;
+                int brickType = brickData.second;
+
+                // Lấy ảnh tương ứng với loại gạch từ "nhà kho" Assets
+                Image brickImage = Assets.bricks.get(brickType);
+
+                // Nếu không tìm thấy ảnh cho loại gạch đó, bỏ qua để tránh lỗi
+                if (brickImage == null) {
+                    System.err.println("Cảnh báo: Không tìm thấy ảnh cho loại gạch " + brickType);
+                    continue;
+                }
 
                 double brickX = Constants.WALL_THICK + j * brickWidth;
                 double brickY = Constants.TOP_OFFSET + i * brickHeight;
 
-                // Lấy một đối tượng Image đã được tải sẵn từ "kho" Assets
-                Image randomBrickImage = Assets.bricks.get(random.nextInt(Assets.bricks.size()));
-
-                // Đưa trực tiếp đối tượng Image đó cho Brick mới
-                newBricks.add(new Brick(brickX, brickY, brickWidth, brickHeight, health, randomBrickImage));
+                newBricks.add(new Brick(brickX, brickY, brickWidth, brickHeight, health, brickImage));
             }
         }
         return newBricks;

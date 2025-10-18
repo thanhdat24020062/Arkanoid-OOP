@@ -26,7 +26,7 @@ public class PowerUpManager {
      */
     public void spawnPowerUp(double brickX, double brickY) {
         // Tỉ lệ 20% ra power-up
-        if (random.nextDouble() < 0.2) {
+        if (random.nextDouble() < 0.3) {
             // Chọn ngẫu nhiên một loại power-up
             PowerUpType[] types = PowerUpType.values();
             PowerUpType randomType = types[random.nextInt(types.length)];
