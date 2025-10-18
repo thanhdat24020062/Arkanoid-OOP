@@ -159,11 +159,6 @@ public class Game {
         paddle.setX(Constants.WIDTH / 2.0 - paddle.getW() / 2.0);
     }
 
-    // --- PHẦN CÒN LẠI CỦA FILE GAME.JAVA ---
-    // (Toàn bộ các hàm update, render, và các hàm xử lý khác giữ nguyên như file
-    // hoàn chỉnh cuối cùng tôi đã gửi)
-    // Dưới đây là các hàm đó để bạn tiện copy & paste.
-
     public void update(double dt) {
         switch (state) {
             case MENU:
