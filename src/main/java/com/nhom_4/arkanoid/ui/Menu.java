@@ -15,7 +15,7 @@ public class Menu {
     }
 
     private final String[] items = { "START", "HOW TO PLAY", "EXIT" };
-    private int selected = 0;
+
     private boolean showHelp = false;
 
     // ====== Exit? overlay ======
@@ -28,7 +28,7 @@ public class Menu {
     private final Rectangle[] btn = { new Rectangle(), new Rectangle(), new Rectangle() };
 
     private final Font titleFont = new Font(Font.SANS_SERIF, Font.BOLD, 42);
-    private final Font itemFont = new Font(Font.SANS_SERIF, Font.BOLD, 20);
+
     private final Font helpFont = new Font(Font.MONOSPACED, Font.PLAIN, 14);
 
     public boolean isHelpVisible() {
@@ -64,7 +64,6 @@ public class Menu {
         // Bình thường: click các nút menu
         for (int i = 0; i < items.length; i++) {
             if (btn[i].contains(p)) {
-                selected = i;
                 Sound.blip();
                 if (i == 0)
                     return Action.START;
@@ -79,13 +78,6 @@ public class Menu {
             }
         }
         return Action.NONE;
-    }
-
-    private void move(int dir) {
-        int old = selected;
-        selected = (selected + dir + items.length) % items.length;
-        if (old != selected)
-            Sound.tick();
     }
 
     public void drawMenuBackground(Graphics2D g) {
@@ -200,25 +192,25 @@ public class Menu {
         Point mousePos = mouseInput.getPosition();
 
         Rectangle rYes = Renderer.drawButtonInMenu(
-                    g,
-                    Assets.BUTTON_SMALL,
-                    "YES",
-                    Constants.WIDTH / 2-110,
-                    Constants.HEIGHT/2+60,
-                    Assets.fontPixels_40 != null ? Assets.fontPixels_40 : titleFont,
-                    mousePos,
-                    1.00f,
-                    1.06f);
+                g,
+                Assets.BUTTON_SMALL,
+                "YES",
+                Constants.WIDTH / 2 - 110,
+                Constants.HEIGHT / 2 + 60,
+                Assets.fontPixels_40 != null ? Assets.fontPixels_40 : titleFont,
+                mousePos,
+                1.00f,
+                1.06f);
         Rectangle rNo = Renderer.drawButtonInMenu(
-                    g,
-                    Assets.BUTTON_SMALL,
-                    "NO",
-                    Constants.WIDTH / 2+100,
-                    Constants.HEIGHT/2+60,
-                    Assets.fontPixels_40 != null ? Assets.fontPixels_40 : titleFont,
-                    mousePos,
-                    1.00f,
-                    1.06f);
+                g,
+                Assets.BUTTON_SMALL,
+                "NO",
+                Constants.WIDTH / 2 + 100,
+                Constants.HEIGHT / 2 + 60,
+                Assets.fontPixels_40 != null ? Assets.fontPixels_40 : titleFont,
+                mousePos,
+                1.00f,
+                1.06f);
         yesBtn.setBounds(rYes);
         noBtn.setBounds(rNo);
 

@@ -69,6 +69,8 @@ public class PowerUpManager {
             case LASER_PADDLE:
                 paddle.activateLasers(7.0); // Kích hoạt súng trong 7 giây
                 break;
+            default:
+                break;
         }
     }
 

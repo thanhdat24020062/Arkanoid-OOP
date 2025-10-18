@@ -1,8 +1,6 @@
 package com.nhom_4.arkanoid.util;
 
 import javax.imageio.ImageIO;
-import javax.print.DocFlavor.URL;
-import javax.swing.ImageIcon;
 
 import com.nhom_4.arkanoid.gfx.Assets;
 
@@ -40,37 +38,33 @@ public class Files {
             return null;
         }
     }
-public static Image loadImage(String pathOrCp) {
-    try {
-        // 1) Thử classpath (khi bạn truyền "/images/menu_bg.png")
-        //    => yêu cầu ảnh nằm ở src/main/resources/images/...
-        java.net.URL url = Files.class.getResource(pathOrCp);
-        if (url != null) {
-            // Dùng ImageIO để load đồng bộ, tránh ảnh “chưa kịp decode”
-            BufferedImage bi = ImageIO.read(url);
-            if (bi != null) return bi;
+
+    public static Image loadImage(String pathOrCp) {
+        try {
+            java.net.URL url = Files.class.getResource(pathOrCp);
+            if (url != null) {
+                // Dùng ImageIO để load đồng bộ, tránh ảnh “chưa kịp decode”
+                BufferedImage bi = ImageIO.read(url);
+                if (bi != null)
+                    return bi;
+            }
+
+            File f = new File(pathOrCp);
+            if (f.exists()) {
+                BufferedImage bi = ImageIO.read(f);
+                if (bi != null)
+                    return bi;
+            }
+
+            String fsAbs = f.getAbsolutePath();
+            throw new IllegalArgumentException(
+                    "Không tìm thấy ảnh. Classpath='" + pathOrCp + "', FileSystem='" + fsAbs + "'");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
-
-        // 2) Fallback: thử đường dẫn file hệ thống (vd: "src/main/resources/images/menu_bg.png")
-        File f = new File(pathOrCp);
-        if (f.exists()) {
-            BufferedImage bi = ImageIO.read(f);
-            if (bi != null) return bi;
-        }
-
-        // 3) Báo lỗi rõ ràng
-        String fsAbs = f.getAbsolutePath();
-        throw new IllegalArgumentException(
-            "Không tìm thấy ảnh. Classpath='" + pathOrCp + "', FileSystem='" + fsAbs + "'"
-        );
-
-    } catch (Exception e) {
-        // In stacktrace để debug thật sự lỗi gì (sai path, ảnh hỏng, v.v.)
-        e.printStackTrace();
-        return null;
     }
-}
-
 
     public static Font loadFont(String cpPath, int style, float size) {
         try (InputStream is = Assets.class.getResourceAsStream(cpPath)) {
@@ -78,11 +72,9 @@ public static Image loadImage(String pathOrCp) {
                 throw new IllegalArgumentException("Font not found on classpath: " + cpPath);
             }
             Font base = Font.createFont(Font.TRUETYPE_FONT, is);
-            // Trả về font đã set style & size
             return base.deriveFont(style, size);
         } catch (Exception e) {
             System.err.println("[Assets] Failed to load font " + cpPath + " -> " + e);
-            // Fallback: dùng SansSerif hệ thống
             return new Font(Font.SANS_SERIF, style, Math.round(size));
         }
     }

@@ -1,4 +1,3 @@
-// src/com/nhom_4/arkanoid/entity/PowerUp.java
 package com.nhom_4.arkanoid.entity;
 
 import java.awt.*;
@@ -47,6 +46,8 @@ public class PowerUp {
                 text = "F";
             case LASER_PADDLE:
                 text = "S";
+                break;
+            default:
                 break;
         }
         FontMetrics fm = g.getFontMetrics();

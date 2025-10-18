@@ -1,7 +1,7 @@
 package com.nhom_4.arkanoid.entity;
 
 import com.nhom_4.arkanoid.config.Constants;
-import com.nhom_4.arkanoid.gfx.Assets; // <-- 1. Thêm import này
+import com.nhom_4.arkanoid.gfx.Assets;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -11,7 +11,6 @@ import java.util.List;
 public class Paddle extends Entity {
     private double speed;
 
-    // --- Các biến cho trạng thái súng laser ---
     private boolean hasLasers = false;
     private double laserTimer = 0;
     private double shootCooldown = 0;
@@ -37,8 +36,6 @@ public class Paddle extends Entity {
         }
     }
 
-    // --- CÁC PHƯƠNG THỨC KHÁC GIỮ NGUYÊN ---
-
     public void update(double dt, double dir) {
         x += dir * speed * dt;
 
@@ -49,8 +46,6 @@ public class Paddle extends Entity {
         if (x + w > Constants.WIDTH - Constants.WALL_THICK) {
             x = Constants.WIDTH - Constants.WALL_THICK - w;
         }
-
-        // Cập nhật trạng thái súng
         if (hasLasers) {
             laserTimer -= dt;
             if (laserTimer <= 0) {
@@ -119,5 +114,5 @@ public class Paddle extends Entity {
 
     @Override
     public void update(double dt) {
-        /* Không dùng */ }
+    }
 }

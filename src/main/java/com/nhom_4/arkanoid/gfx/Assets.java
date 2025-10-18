@@ -7,9 +7,9 @@ import com.nhom_4.arkanoid.config.Constants;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+
 import java.util.HashMap;
-import java.util.List;
+
 import java.util.Map;
 
 public class Assets {
@@ -34,12 +34,10 @@ public class Assets {
         BUTTON_EXIT = Files.loadImageCP("/images/button_menu.png", 200, 120);
         BUTTON_SMALL = Files.loadImageCP("/images/button_menu.png", 150, 90);
         EXIT_DIALOG = Files.loadImageCP("/images/exit.png", 900, 600);
-        // load font chữ
+
         fontPixels_40 = Files.loadFont("/fonts/font1.ttf", 0, 40);
         fontPixels_44 = Files.loadFont("/fonts/font1.ttf", 0, 44);
 
-        // Cung cấp đường dẫn tương đối từ thư mục gốc của dự án
-        // background = loadImage("src/main/resources/images/background.png");
         paddle = Files.loadImage("/images/paddle.png");
         ball = Files.loadImage("/images/ball.png");
 

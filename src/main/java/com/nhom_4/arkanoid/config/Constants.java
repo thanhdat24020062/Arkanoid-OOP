@@ -9,7 +9,7 @@ public final class Constants {
     // Màn hình
     public static final int WIDTH = 1200;
     public static final int HEIGHT = 800;
-    public static final Color BG_COLOR = new Color(255, 255, 255);// Màu nền
+    public static final Color BG_COLOR = new Color(255, 255, 255);
 
     // Loop
     public static final int TARGET_UPS = 120;
