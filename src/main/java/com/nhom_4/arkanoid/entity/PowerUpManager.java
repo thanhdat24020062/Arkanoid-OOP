@@ -25,8 +25,8 @@ public class PowerUpManager {
      * @param brickY Tọa độ y của viên gạch
      */
     public void spawnPowerUp(double brickX, double brickY) {
-        // Tỉ lệ 20% ra power-up
-        if (random.nextDouble() < 0.3) {
+        // test nên để 100%
+        if (random.nextDouble() < 1) {
             // Chọn ngẫu nhiên một loại power-up
             PowerUpType[] types = PowerUpType.values();
             PowerUpType randomType = types[random.nextInt(types.length)];
@@ -34,7 +34,7 @@ public class PowerUpManager {
         }
     }
 
-    public void update(double dt, Paddle paddle, HUD hud, Ball ball) {
+    public void update(double dt, Paddle paddle, HUD hud, List<Ball> balls) {
         Iterator<PowerUp> iterator = activePowerUps.iterator();
         while (iterator.hasNext()) {
             PowerUp p = iterator.next();
@@ -42,7 +42,7 @@ public class PowerUpManager {
 
             // Kiểm tra va chạm với paddle
             if (p.getRect().intersects(paddle.getRect())) {
-                applyEffect(p, paddle, hud, ball);
+                applyEffect(p, paddle, hud, balls);
                 p.setActive(false); // Vô hiệu hóa sau khi va chạm
             }
 
@@ -53,21 +53,32 @@ public class PowerUpManager {
         }
     }
 
-    private void applyEffect(PowerUp p, Paddle paddle, HUD hud, Ball ball) {
+    private void applyEffect(PowerUp p, Paddle paddle, HUD hud, List<Ball> balls) {
         switch (p.getType()) {
             case WIDEN_PADDLE:
                 // Tăng chiều rộng paddle, nhưng có giới hạn
-                double newWidth = Math.min(paddle.getW() * 1.05, Constants.PADDLE_WIDTH * 1.2);
+                double newWidth = Math.min(paddle.getW() + Constants.PADDLE_WIDTH * 0.1, Constants.PADDLE_WIDTH * 1.5);
                 paddle.setW(newWidth);
                 break;
             case EXTRA_LIFE:
                 hud.addLife();
                 break;
             case FIREBALL: // <-- Thêm case này
-                ball.activateFireball(5.0); // Kích hoạt bóng lửa trong 5 giây
+                for (Ball b : balls) {
+                    b.activateFireball(5.0);
+                }
                 break;
             case LASER_PADDLE:
-                paddle.activateLasers(7.0); // Kích hoạt súng trong 7 giây
+                paddle.activateLasers(7.0);
+                break;
+            case MULTI_BALL:
+                if (!balls.isEmpty()) {
+                    Ball baseBall = balls.get(0);
+                    Ball clone1 = baseBall.cloneAndLaunch(-15);
+                    Ball clone2 = baseBall.cloneAndLaunch(15);
+                    balls.add(clone1);
+                    balls.add(clone2);
+                }
                 break;
             default:
                 break;

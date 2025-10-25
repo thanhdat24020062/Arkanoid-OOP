@@ -1,5 +1,7 @@
 package com.nhom_4.arkanoid.physics;
 
+import java.util.List;
+
 import com.nhom_4.arkanoid.config.Constants;
 import com.nhom_4.arkanoid.entity.Ball;
 
@@ -20,6 +22,13 @@ public final class Collision {
         if (ball.getY() - ball.getR() < 0) {
             ball.setY(ball.getR());
             ball.setVy(Math.abs(ball.getVy()));
+        }
+    }
+
+    // --- Thêm phương thức phản xạ cho nhiều bóng ---
+    public static void reflectBallOnWallsList(List<Ball> balls) {
+        for (Ball ball : balls) {
+            reflectBallOnWalls(ball);
         }
     }
 }

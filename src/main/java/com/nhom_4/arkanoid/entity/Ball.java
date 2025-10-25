@@ -3,7 +3,9 @@ package com.nhom_4.arkanoid.entity;
 import com.nhom_4.arkanoid.gfx.Assets; // <-- Thêm import này
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.Random;
+import java.util.List;
 
 public class Ball extends Entity {
     private double vx, vy, r;
@@ -11,6 +13,10 @@ public class Ball extends Entity {
     private final Random rng = new Random();
     private boolean isFireball = false;
     private double fireballTimer = 0;
+
+    // Thêm hiệu ứng vệt sáng
+    private final List<Point> trail = new ArrayList<>();
+    private static final int TRAIL_LENGTH = 30;
 
     public Ball(double x, double y, double r) {
         this.x = x;
@@ -21,7 +27,19 @@ public class Ball extends Entity {
 
     @Override
     public void render(Graphics2D g) {
-        // Lấy ảnh bóng trực tiếp từ "nhà kho" Assets để vẽ
+        // Vẽ vệt sáng
+        for (int i = 0; i < trail.size(); i++) {
+            double alpha = (double) i / trail.size();
+            int size = (int) (r * 2 * (0.7 + 0.3 * alpha));
+            Color c = isFireball
+                    ? new Color(255, (int) (80 + 150 * alpha), 0, (int) (60 * alpha))
+                    : new Color(150, 200, 255, (int) (50 * alpha));
+            Point p = trail.get(i);
+            g.setColor(c);
+            g.fillOval(p.x - size / 2, p.y - size / 2, size, size);
+        }
+
+        // Lấy ảnh từ assets
         g.drawImage(Assets.ball, (int) (x - r), (int) (y - r), (int) (r * 2), (int) (r * 2), null);
 
         // Vẽ thêm hiệu ứng lửa nếu cần
@@ -37,6 +55,12 @@ public class Ball extends Entity {
     public void update(double dt) {
         x += vx * dt;
         y += vy * dt;
+
+        // Cập nhật vệt sáng
+        trail.add(new Point((int) x, (int) y));
+        if (trail.size() > TRAIL_LENGTH)
+            trail.remove(0);
+
         if (isFireball) {
             fireballTimer -= dt;
             if (fireballTimer <= 0) {
@@ -128,6 +152,13 @@ public class Ball extends Entity {
         }
 
         return clone;
+    }
+
+    public List<Ball> spawnMultiball() {
+        List<Ball> clones = new ArrayList<>();
+        clones.add(this.cloneAndLaunch(20));   
+        clones.add(this.cloneAndLaunch(-20));
+        return clones;
     }
 
     public boolean isFireball() {
