@@ -25,6 +25,7 @@ import com.nhom_4.arkanoid.physics.Resolver;
 import com.nhom_4.arkanoid.ui.HUD;
 import com.nhom_4.arkanoid.ui.Screens;
 import com.nhom_4.arkanoid.util.Pair;
+import com.nhom_4.arkanoid.util.LevelLoader;
 
 public class Game {
     private GameState state = GameState.MENU;
@@ -62,75 +63,8 @@ public class Game {
     }
 
     private void loadAllLevelMaps() {
-        levelMaps = new ArrayList<>();
-        levelMaps.add(new Pair[][] {
-                { new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5),
-                        new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5),
-                        new Pair(2, 5), new Pair(2, 5), new Pair(2, 5) },
-                { new Pair(1, 4), new Pair(1, 4), null, new Pair(1, 4), new Pair(1, 4), null, new Pair(1, 4),
-                        new Pair(1, 4), null, new Pair(1, 4), new Pair(1, 4), null, new Pair(1, 4), new Pair(1, 4),
-                        new Pair(1, 4) },
-                { new Pair(1, 3), null, new Pair(1, 3), new Pair(1, 3), null, new Pair(1, 3), new Pair(1, 3),
-                        new Pair(1, 3), new Pair(1, 3), new Pair(1, 3), null, new Pair(1, 3), new Pair(1, 3), null,
-                        new Pair(1, 3) },
-                { new Pair(1, 2), new Pair(1, 2), null, new Pair(1, 2), new Pair(1, 2), null, new Pair(1, 2),
-                        new Pair(1, 2), null, new Pair(1, 2), new Pair(1, 2), null, new Pair(1, 2), new Pair(1, 2),
-                        new Pair(1, 2) },
-                { new Pair(1, 1), null, new Pair(1, 1), new Pair(1, 1), null, new Pair(1, 1), new Pair(1, 1),
-                        new Pair(1, 1), new Pair(1, 1), new Pair(1, 1), null, new Pair(1, 1), new Pair(1, 1), null,
-                        new Pair(1, 1) },
-                { new Pair(1, 2), new Pair(1, 2), null, new Pair(1, 2), new Pair(1, 2), null, new Pair(1, 2),
-                        new Pair(1, 2), null, new Pair(1, 2), new Pair(1, 2), null, new Pair(1, 2), new Pair(1, 2),
-                        new Pair(1, 2) },
-                { new Pair(1, 3), null, new Pair(1, 3), new Pair(1, 3), null, new Pair(1, 3), new Pair(1, 3),
-                        new Pair(1, 3), new Pair(1, 3), new Pair(1, 3), null, new Pair(1, 3), new Pair(1, 3), null,
-                        new Pair(1, 3) },
-                { new Pair(1, 4), new Pair(1, 4), null, new Pair(1, 4), new Pair(1, 4), null, new Pair(1, 4),
-                        new Pair(1, 4), null, new Pair(1, 4), new Pair(1, 4), null, new Pair(1, 4), new Pair(1, 4),
-                        new Pair(1, 4) },
-                { new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5),
-                        new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5),
-                        new Pair(2, 5), new Pair(2, 5), new Pair(2, 5) }
-        });
-
-        levelMaps.add(new Pair[][] {
-                { new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5),
-                        new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5),
-                        new Pair(2, 5), new Pair(2, 5), new Pair(2, 5) },
-
-                { new Pair(1, 4), new Pair(1, 4), new Pair(1, 4), new Pair(1, 4), null, null, new Pair(1, 4),
-                        new Pair(1, 4), new Pair(1, 4), null, null, new Pair(1, 4), new Pair(1, 4), new Pair(1, 4),
-                        new Pair(1, 4) },
-
-                { new Pair(1, 3), null, new Pair(1, 3), null, new Pair(1, 3), new Pair(1, 3), null,
-                        new Pair(2, 2), null, new Pair(1, 3), new Pair(1, 3), null, new Pair(1, 3), null,
-                        new Pair(1, 3) },
-
-                { new Pair(1, 2), new Pair(1, 2), null, new Pair(1, 2), new Pair(1, 2), null, new Pair(1, 2),
-                        new Pair(2, 1), new Pair(1, 2), null, new Pair(1, 2), new Pair(1, 2), null, new Pair(1, 2),
-                        new Pair(1, 2) },
-
-                { new Pair(1, 1), null, new Pair(1, 1), new Pair(1, 1), null, new Pair(2, 3), new Pair(1, 1),
-                        new Pair(2, 5), new Pair(1, 1), new Pair(2, 3), null, new Pair(1, 1), new Pair(1, 1), null,
-                        new Pair(1, 1) },
-
-                { new Pair(1, 2), new Pair(1, 2), null, new Pair(1, 2), new Pair(1, 2), null, new Pair(1, 2),
-                        new Pair(2, 1), new Pair(1, 2), null, new Pair(1, 2), new Pair(1, 2), null, new Pair(1, 2),
-                        new Pair(1, 2) },
-
-                { new Pair(1, 3), null, new Pair(1, 3), null, new Pair(1, 3), new Pair(1, 3), null,
-                        new Pair(2, 2), null, new Pair(1, 3), new Pair(1, 3), null, new Pair(1, 3), null,
-                        new Pair(1, 3) },
-
-                { new Pair(1, 4), new Pair(1, 4), new Pair(1, 4), new Pair(1, 4), null, null, new Pair(1, 4),
-                        new Pair(1, 4), new Pair(1, 4), null, null, new Pair(1, 4), new Pair(1, 4), new Pair(1, 4),
-                        new Pair(1, 4) },
-
-                { new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5),
-                        new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5), new Pair(2, 5),
-                        new Pair(2, 5), new Pair(2, 5), new Pair(2, 5) }
-        });
-
+        // Gọi phương thức tĩnh từ class LevelLoader
+        this.levelMaps = LevelLoader.loadAllLevelMaps();
     }
 
     private List<Brick> spawnBricksForCurrentLevel() {
