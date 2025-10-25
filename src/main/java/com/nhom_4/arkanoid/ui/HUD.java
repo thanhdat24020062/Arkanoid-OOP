@@ -14,7 +14,6 @@ public class HUD {
         lives = 3;
     }
 
-    // trong lớp HUD
     public void addLife() {
         this.lives++;
     }

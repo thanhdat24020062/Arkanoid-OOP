@@ -154,6 +154,13 @@ public class Ball extends Entity {
         return clone;
     }
 
+    public List<Ball> spawnMultiball() {
+        List<Ball> clones = new ArrayList<>();
+        clones.add(this.cloneAndLaunch(20));   
+        clones.add(this.cloneAndLaunch(-20));
+        return clones;
+    }
+
     public boolean isFireball() {
         return this.isFireball;
     }

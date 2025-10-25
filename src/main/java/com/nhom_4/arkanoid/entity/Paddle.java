@@ -1,7 +1,7 @@
 package com.nhom_4.arkanoid.entity;
 
 import com.nhom_4.arkanoid.config.Constants;
-import com.nhom_4.arkanoid.gfx.Assets; // <-- 1. Thêm import này
+import com.nhom_4.arkanoid.gfx.Assets;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -11,7 +11,6 @@ import java.util.List;
 public class Paddle extends Entity {
     private double speed;
 
-    // --- Các biến cho trạng thái súng laser ---
     private boolean hasLasers = false;
     private double laserTimer = 0;
     private double shootCooldown = 0;
@@ -61,8 +60,6 @@ public class Paddle extends Entity {
         }
     }
 
-    // --- CÁC PHƯƠNG THỨC KHÁC GIỮ NGUYÊN ---
-
     public void update(double dt, double dir) {
         double oldX = x;
         x += dir * speed * dt;
@@ -78,14 +75,14 @@ public class Paddle extends Entity {
         // Cập nhật vệt sáng
         double dx = Math.abs(x - oldX);
 
-        if (dx > 0.1) { // chỉ tạo vệt khi có di chuyển
+        if (dx > 0.1) { 
             trailTimer += dx;
             if (trailTimer >= TRAIL_GAP) {
                 trail.add(0, new Point((int) (x + w / 2), (int) y));
                 if (trail.size() > TRAIL_LENGTH) trail.remove(trail.size() - 1);
                 trailTimer = 0;
             }
-            idleTimer = 0; // reset bộ đếm đứng yên
+            idleTimer = 0;
         } else {
             idleTimer += dt * TRAIL_FADE_SPEED;
             // giảm dần số vệt theo thời gian đứng yên
@@ -164,5 +161,5 @@ public class Paddle extends Entity {
 
     @Override
     public void update(double dt) {
-        /* Không dùng */ }
+    }
 }

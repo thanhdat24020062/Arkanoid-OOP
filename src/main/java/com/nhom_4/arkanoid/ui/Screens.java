@@ -3,12 +3,8 @@ package com.nhom_4.arkanoid.ui;
 import java.awt.*;
 
 import com.nhom_4.arkanoid.config.Constants;
-import com.nhom_4.arkanoid.gfx.Renderer;
 
 public class Screens {
-    private final Font big = new Font(Font.SANS_SERIF, Font.BOLD, 36);
-    private final Font small = new Font(Font.SANS_SERIF, Font.BOLD, 16);
-
     public void drawBackground(Graphics2D g) {
         Paint old = g.getPaint();
         g.setPaint(new GradientPaint(0, 0, new Color(20, 24, 36), 0, Constants.HEIGHT, new Color(18, 18, 22)));
@@ -23,30 +19,27 @@ public class Screens {
         g.fillRect(Constants.WIDTH - Constants.WALL_THICK, 0, Constants.WALL_THICK, Constants.HEIGHT);
     }
 
-
-    // Trong file: Screens.java
+    public void drawCenterText(Graphics2D g, String title, String subtitle) {
+        g.setFont(new Font("Arial", Font.BOLD, 48));
+        FontMetrics fm = g.getFontMetrics();
+        int titleWidth = fm.stringWidth(title);
+        g.setColor(Color.WHITE);
+        g.drawString(title, (Constants.WIDTH - titleWidth) / 2, Constants.HEIGHT / 2 - 20);
+        g.setFont(new Font("Arial", Font.PLAIN, 24));
+        fm = g.getFontMetrics();
+        int subtitleWidth = fm.stringWidth(subtitle);
+        g.setColor(Color.LIGHT_GRAY);
+        g.drawString(subtitle, (Constants.WIDTH - subtitleWidth) / 2, Constants.HEIGHT / 2 + 20);
+    }
 
     public void drawDeathLine(Graphics2D g) {
-        // Lưu lại nét vẽ cũ để không ảnh hưởng đến các đối tượng khác
         Stroke oldStroke = g.getStroke();
-
-        // Tạo một nét vẽ mới (dạng đường đứt nét)
-        // new float[]{9} nghĩa là 9 pixel vẽ, 9 pixel trống
         Stroke dashed = new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] { 9 }, 0);
         g.setStroke(dashed);
-
-        // Chọn màu (đỏ, hơi trong suốt)
         g.setColor(new Color(255, 0, 0, 150));
-
-        // Vị trí của đường kẻ (ngang bằng với đáy của tường)
         int yPos = (Constants.HEIGHT - 50) + (int) Constants.PADDLE_HEIGHT + 5;
-
-        // Vẽ đường kẻ từ tường trái sang tường phải
         g.drawLine(Constants.WALL_THICK, yPos, Constants.WIDTH - Constants.WALL_THICK, yPos);
-
-        // Phục hồi lại nét vẽ cũ
         g.setStroke(oldStroke);
     }
 
-   
 }
