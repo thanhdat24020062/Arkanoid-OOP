@@ -25,6 +25,7 @@ public class PowerUpManager {
      * @param brickY Tọa độ y của viên gạch
      */
     public void spawnPowerUp(double brickX, double brickY) {
+        // test nên để 100%
         if (random.nextDouble() < 1) {
             // Chọn ngẫu nhiên một loại power-up
             PowerUpType[] types = PowerUpType.values();
@@ -56,7 +57,7 @@ public class PowerUpManager {
         switch (p.getType()) {
             case WIDEN_PADDLE:
                 // Tăng chiều rộng paddle, nhưng có giới hạn
-                double newWidth = Math.min(paddle.getW() + Constants.PADDLE_WIDTH * 0.2, Constants.PADDLE_WIDTH * 2);
+                double newWidth = Math.min(paddle.getW() + Constants.PADDLE_WIDTH * 0.1, Constants.PADDLE_WIDTH * 1.5);
                 paddle.setW(newWidth);
                 break;
             case EXTRA_LIFE:

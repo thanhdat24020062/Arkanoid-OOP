@@ -193,7 +193,6 @@ public class Game {
         paddle = new Paddle(Constants.WIDTH / 2.0 - pw / 2.0, Constants.HEIGHT - 50, pw, Constants.PADDLE_HEIGHT,
                 Constants.PADDLE_SPEED);
                 
-        //ball = new Ball(paddle.centerX(), paddle.getY() - Constants.BALL_RADIUS - 2, Constants.BALL_RADIUS);
         balls = new ArrayList<>();
         Ball initialBall = new Ball(paddle.centerX(), paddle.getY() - Constants.BALL_RADIUS - 2, Constants.BALL_RADIUS);
         balls.add(initialBall);
@@ -203,10 +202,6 @@ public class Game {
 
     private void resetAndStickBall() {
         paddle.deactivateLasers();
-        // ball.deactivateFireball();
-        // ball.stickToPaddle(true);
-        // ball.setVx(0);
-        // ball.setVy(0);
         for (Ball b : balls) {
             b.deactivateFireball();
             b.stickToPaddle(true);
@@ -245,22 +240,6 @@ public class Game {
     private void updatePlayingState(double dt) {
         double dir = (keys.isLeft() ? -1 : 0) + (keys.isRight() ? 1 : 0);
         paddle.update(dt, dir);
-
-        // if (ball.isSticking()) {
-        //     ball.setX(paddle.centerX());
-        //     ball.setY(paddle.getY() - ball.getR() - 2);
-        //     if (keys.consumeSpace()) {
-        //         ball.launchRandomUp();
-        //         showPressSpace = false;// ẩn showPressSpace
-        //     }
-        // } else {
-        //     if (paddle.hasLasers()) {
-        //         List<Bullet> newBullets = paddle.shoot();
-        //         if (newBullets != null)
-        //             bullets.addAll(newBullets);
-        //     }
-        //     ball.update(dt);
-        // }
         
         for (Ball b : balls) {
             if (b.isSticking()) {
@@ -281,11 +260,9 @@ public class Game {
                 bullets.addAll(newBullets);
         }
 
-        //powerUpManager.update(dt, paddle, hud, ball);
         powerUpManager.update(dt, paddle, hud, balls);
         handleBullets(dt);
 
-        //Collision.reflectBallOnWalls(ball);
         Collision.reflectBallOnWallsList(balls);
         handleBricks();
         handlePaddleCollision();
@@ -299,13 +276,6 @@ public class Game {
     }
 
     private void handlePaddleCollision() {
-        // if (!ball.isSticking() && ball.getRect().intersects(paddle.getRect())) {
-        //     ball.setY(paddle.getY() - ball.getR() - 0.1);
-        //     ball.setVy(-Math.abs(ball.getVy()));
-        //     double hit = (ball.getX() - paddle.centerX()) / (paddle.getW() / 2.0);
-        //     ball.setVx(ball.getVx() + hit * 180);
-        //     ball.limitSpeed(Constants.BALL_SPEED_CAP);
-        // }
         for (Ball b : balls) {
             if (!b.isSticking() && b.getRect().intersects(paddle.getRect())) {
                 b.setY(paddle.getY() - b.getR() - 0.1);
@@ -318,15 +288,6 @@ public class Game {
     }
 
     private void checkWinLoseConditions() {
-        // if (ball.getY() - ball.getR() > Constants.HEIGHT) {
-        //     if (hud.getLives() <= 1) {
-        //         hud.loseLife();
-        //         state = GameState.GAME_OVER;
-        //     } else {
-        //         hud.loseLife();
-        //         resetAndStickBall();
-        //     }
-        // }
         Iterator<Ball> it = balls.iterator();
         while (it.hasNext()) {
             Ball b = it.next();
@@ -368,9 +329,13 @@ public class Game {
             boolean hit = false;
             for (Brick brick : bricks) {
                 if (brick.isAlive() && bullet.getRect().intersects(brick.getRect())) {
-                    brick.destroy();
-                    hud.addScore(50);
+                    boolean destroyed = brick.hit();
+                    hud.addScore(destroyed ? 50 : 10);
                     hit = true;
+
+                    if (destroyed) {
+                        powerUpManager.spawnPowerUp(brick.centerX(), brick.centerY());
+                    }
                     break;
                 }
             }
@@ -380,49 +345,23 @@ public class Game {
     }
 
     private void handleBricks() {
-        // Rectangle2D.Double ballRect = ball.getRect();
-        // for (Brick br : bricks) {
-        //     if (!br.isAlive())
-        //         continue;
-
-        //     if (ballRect.intersects(br.getRect())) {
-        //         if (ball.isFireball()) {
-        //             br.destroy();
-        //             hud.addScore(50);
-        //         } else {
-        //             Resolver.resolveBallBrick(ball, br);
-        //             boolean destroyed = br.hit();
-        //             if (destroyed) {
-        //                 hud.addScore(50);
-        //                 powerUpManager.spawnPowerUp(br.centerX(), br.centerY());
-        //             } else {
-        //                 hud.addScore(10);
-        //             }
-        //             ball.speedUp(Constants.BALL_SPEEDUP_MUL, Constants.BALL_SPEED_CAP);
-        //         }
-        //         break;
-        //     }
-        // }
         for (Ball b : balls) {
             Rectangle2D.Double ballRect = b.getRect();
             for (Brick br : bricks) {
                 if (!br.isAlive()) continue;
 
                 if (ballRect.intersects(br.getRect())) {
-                    if (b.isFireball()) {
-                        br.destroy();
-                        hud.addScore(50);
-                    } else {
+                    if (!b.isFireball()) {
                         Resolver.resolveBallBrick(b, br);
-                        boolean destroyed = br.hit();
-                        if (destroyed) {
-                            hud.addScore(50);
-                            powerUpManager.spawnPowerUp(br.centerX(), br.centerY());
-                        } else {
-                            hud.addScore(10);
-                        }
-                        b.speedUp(Constants.BALL_SPEEDUP_MUL, Constants.BALL_SPEED_CAP);
                     }
+                    boolean destroyed = br.hit();
+                    if (destroyed) {
+                        hud.addScore(50);
+                        powerUpManager.spawnPowerUp(br.centerX(), br.centerY());
+                    } else {
+                        hud.addScore(10);
+                    }
+                    b.speedUp(Constants.BALL_SPEEDUP_MUL, Constants.BALL_SPEED_CAP);
                     break;
                 }
             }
@@ -446,7 +385,6 @@ public class Game {
                 br.render(g);
 
         paddle.render(g);
-        //ball.render(g);
         for (Ball b : balls) {
             b.render(g);
         }

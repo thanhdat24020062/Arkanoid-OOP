@@ -44,6 +44,7 @@ public class PowerUp {
                 break;
             case FIREBALL:
                 text = "F";
+                break;
             case LASER_PADDLE:
                 text = "S";
                 break;
