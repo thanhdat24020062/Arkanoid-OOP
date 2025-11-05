@@ -37,9 +37,4 @@ public class Bullet extends Entity {
     public void setActive(boolean active) {
         this.active = active;
     }
-
-    @Override
-    public Rectangle2D.Double getRect() {
-        return new Rectangle2D.Double(x, y, w, h);
-    }
 }

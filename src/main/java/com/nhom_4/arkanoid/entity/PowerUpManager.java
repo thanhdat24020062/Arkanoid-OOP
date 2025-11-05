@@ -25,8 +25,8 @@ public class PowerUpManager {
      * @param brickY Tọa độ y của viên gạch
      */
     public void spawnPowerUp(double brickX, double brickY) {
-        // test nên để 100%
-        if (random.nextDouble() < 1) {
+        // 30%
+        if (random.nextDouble() < 0.3) {
             // Chọn ngẫu nhiên một loại power-up
             PowerUpType[] types = PowerUpType.values();
             PowerUpType randomType = types[random.nextInt(types.length)];
@@ -73,7 +73,7 @@ public class PowerUpManager {
                 break;
             case MULTI_BALL:
                 if (!balls.isEmpty()) {
-                    Ball baseBall = balls.get(0);
+                    Ball baseBall = balls.getFirst();
                     Ball clone1 = baseBall.cloneAndLaunch(-15);
                     Ball clone2 = baseBall.cloneAndLaunch(15);
                     balls.add(clone1);
