@@ -49,8 +49,6 @@ public class Ball extends Entity {
         }
     }
 
-    // --- CÁC PHƯƠNG THỨC KHÁC GIỮ NGUYÊN ---
-
     @Override
     public void update(double dt) {
         x += vx * dt;
@@ -59,7 +57,7 @@ public class Ball extends Entity {
         // Cập nhật vệt sáng
         trail.add(new Point((int) x, (int) y));
         if (trail.size() > TRAIL_LENGTH)
-            trail.remove(0);
+            trail.removeFirst();
 
         if (isFireball) {
             fireballTimer -= dt;
@@ -84,16 +82,8 @@ public class Ball extends Entity {
         return stickToPaddle;
     }
 
-    public double getX() {
-        return x;
-    }
-
     public void setX(double v) {
         this.x = v;
-    }
-
-    public double getY() {
-        return y;
     }
 
     public void setY(double v) {
@@ -152,13 +142,6 @@ public class Ball extends Entity {
         }
 
         return clone;
-    }
-
-    public List<Ball> spawnMultiball() {
-        List<Ball> clones = new ArrayList<>();
-        clones.add(this.cloneAndLaunch(20));   
-        clones.add(this.cloneAndLaunch(-20));
-        return clones;
     }
 
     public boolean isFireball() {

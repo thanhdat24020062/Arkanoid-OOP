@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import java.awt.Image;
+
+import com.nhom_4.arkanoid.audio.Sound;
 import com.nhom_4.arkanoid.ui.Menu;
 
 import com.nhom_4.arkanoid.config.Constants;
@@ -278,6 +280,7 @@ public class Game {
     private void handlePaddleCollision() {
         for (Ball b : balls) {
             if (!b.isSticking() && b.getRect().intersects(paddle.getRect())) {
+                Sound.playBoundSound();
                 b.setY(paddle.getY() - b.getR() - 0.1);
                 b.setVy(-Math.abs(b.getVy()));
                 double hit = (b.getX() - paddle.centerX()) / (paddle.getW() / 2.0);
@@ -351,8 +354,13 @@ public class Game {
                 if (!br.isAlive()) continue;
 
                 if (ballRect.intersects(br.getRect())) {
+
                     if (!b.isFireball()) {
                         Resolver.resolveBallBrick(b, br);
+                        //Âm thanh nảy bóng
+                        Sound.playBoundSound();
+                    } else {
+                        Sound.playBreakSound();
                     }
                     boolean destroyed = br.hit();
                     if (destroyed) {

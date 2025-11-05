@@ -1,10 +1,10 @@
 package com.nhom_4.arkanoid.entity;
 
+import com.nhom_4.arkanoid.audio.Sound;
 import com.nhom_4.arkanoid.config.Constants;
 import com.nhom_4.arkanoid.gfx.Assets;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,8 +78,8 @@ public class Paddle extends Entity {
         if (dx > 0.1) { 
             trailTimer += dx;
             if (trailTimer >= TRAIL_GAP) {
-                trail.add(0, new Point((int) (x + w / 2), (int) y));
-                if (trail.size() > TRAIL_LENGTH) trail.remove(trail.size() - 1);
+                trail.addFirst(new Point((int) (x + w / 2), (int) y));
+                if (trail.size() > TRAIL_LENGTH) trail.removeLast();
                 trailTimer = 0;
             }
             idleTimer = 0;
@@ -87,7 +87,7 @@ public class Paddle extends Entity {
             idleTimer += dt * TRAIL_FADE_SPEED;
             // giảm dần số vệt theo thời gian đứng yên
             while (idleTimer > 1 && !trail.isEmpty()) {
-                trail.remove(trail.size() - 1);
+                trail.removeLast();
                 idleTimer -= 1;
             }
         }
@@ -106,11 +106,12 @@ public class Paddle extends Entity {
 
     public List<Bullet> shoot() {
         if (hasLasers && shootCooldown <= 0) {
-            shootCooldown = 0.3; // Bắn mỗi 0.3 giây
+            shootCooldown = 0.5; // Bắn mỗi 0.5 giây
 
             List<Bullet> bullets = new ArrayList<>();
             bullets.add(new Bullet(this.x + 5, this.y)); // Đạn trái
             bullets.add(new Bullet(this.x + this.w - 5, this.y)); // Đạn phải
+            Sound.playShootSound();
 
             return bullets;
         }
@@ -129,15 +130,6 @@ public class Paddle extends Entity {
 
     public boolean hasLasers() {
         return this.hasLasers;
-    }
-
-    @Override
-    public Rectangle2D.Double getRect() {
-        return new Rectangle2D.Double(x, y, w, h);
-    }
-
-    public double getW() {
-        return this.w;
     }
 
     public void setW(double w) {
