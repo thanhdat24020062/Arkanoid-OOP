@@ -44,18 +44,18 @@ public class Menu {
         // Nếu đang mở Exit? thì chỉ xử lý Yes/No
         if (exitConfirm) {
             if (yesBtn.contains(p)) {
-                Sound.blip();
+                //Sound.blip();
                 exitConfirm = false;
                 return Action.EXIT; // Game xử lý thoát
             }
             if (noBtn.contains(p)) {
-                Sound.tick();
+                //Sound.tick();
                 exitConfirm = false;
                 return Action.NONE;
             }
             // click ra ngoài panel -> đóng
             if (!exitPanel.contains(p)) {
-                Sound.tick();
+                //Sound.tick();
                 exitConfirm = false;
             }
             return Action.NONE;
@@ -64,7 +64,7 @@ public class Menu {
         // Bình thường: click các nút menu
         for (int i = 0; i < items.length; i++) {
             if (btn[i].contains(p)) {
-                Sound.blip();
+                //Sound.blip();
                 if (i == 0)
                     return Action.START;
                 if (i == 1) {
@@ -110,6 +110,7 @@ public class Menu {
         int gap = 120;
         Point mousePos = mouseInput.getPosition();
 
+        int hoveredIndex = -1;
         for (int i = 0; i < items.length; i++) {
             BufferedImage target = null;
             if (i == 0)
@@ -132,13 +133,40 @@ public class Menu {
                     1.00f,
                     1.06f);
             btn[i].setBounds(r);
+
+            // Xác định vị trí con chuột để đánh dấu hoveredIndex
+            if (mousePosForMenu != null && r.contains(mousePosForMenu)) {
+                hoveredIndex = i;
+            }
         }
+
+        playHoverIfChanged(hoveredIndex);
 
         if (showHelp)
             drawHelp(g);
 
         if (exitConfirm)
             drawExitConfirm(g, mouseInput); // luôn vẽ sau cùng (đè lên)
+    }
+
+    private static int lastHoverIndex = -1;
+    private static void playHoverIfChanged(int current) {
+        if (current != lastHoverIndex) {
+            if (current != -1) {
+                Sound.playMenuHoverSound();
+            }
+            lastHoverIndex = current;
+        }
+    }
+
+    private static int lastExitHoverIndex = -1;
+    private static void playExitHoverIfChanged(int current) {
+        if (current != lastExitHoverIndex) {
+            if (current != -1) {
+                Sound.playMenuHoverSound();
+            }
+            lastExitHoverIndex = current;
+        }
     }
 
     /** Khung hướng dẫn cũ */
@@ -213,6 +241,17 @@ public class Menu {
                 1.06f);
         yesBtn.setBounds(rYes);
         noBtn.setBounds(rNo);
+
+        int hoveredIndex = -1;
+        if (mousePos != null) {
+            if (rNo.contains(mousePos)) {
+                hoveredIndex = 0;
+            } else if (rYes.contains(mousePos)) {
+                hoveredIndex = 1;
+            }
+        }
+
+        playExitHoverIfChanged(hoveredIndex);
 
         // panel tổng + 2 nút (để click ra ngoài mới đóng)
         Rectangle union = new Rectangle(px, py, iw, ih);

@@ -3,14 +3,17 @@ package com.nhom_4.arkanoid;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import com.nhom_4.arkanoid.audio.Music;
 import com.nhom_4.arkanoid.audio.Sound;
 import com.nhom_4.arkanoid.core.GamePanel;
 import com.nhom_4.arkanoid.gfx.Assets;
 
 public class App {
     public static void main(String[] args) {
-        Assets.load();
         Sound.init();
+        Music.init();
+        Assets.load();
+
         SwingUtilities.invokeLater(() -> {
             Assets.load();
             JFrame f = new JFrame("Arkanoid");

@@ -9,6 +9,7 @@ import java.util.List;
 
 import java.awt.Image;
 
+import com.nhom_4.arkanoid.audio.Music;
 import com.nhom_4.arkanoid.audio.Sound;
 import com.nhom_4.arkanoid.ui.Menu;
 
@@ -30,6 +31,7 @@ import com.nhom_4.arkanoid.util.Pair;
 
 public class Game {
     private GameState state = GameState.MENU;
+    private GameState previousState = null;
     private final HUD hud = new HUD();
     private final Screens screens = new Screens();
     private final Menu menu = new Menu();
@@ -215,6 +217,30 @@ public class Game {
     }
 
     public void update(double dt) {
+        //Phát nhạc
+        if (state != previousState) {
+            switch (state) {
+                case MENU:
+                    Music.playMenuMusic();
+                    Music.stopPlayingMusic();
+                    break;
+                case PLAYING:
+                    Music.playPlayingMusic();
+                    Music.stopMenuMusic();
+                    break;
+                case GAME_OVER:
+                    Sound.playGameOverSound();
+                    Music.stopMenuMusic();
+                    Music.stopPlayingMusic();
+                    break;
+                default:
+                    Music.stopMenuMusic();
+                    Music.stopPlayingMusic();
+                    break;
+            }
+            previousState = state;
+        }
+
         switch (state) {
             case MENU:
                 Menu.Action act = menu.update(mouse);

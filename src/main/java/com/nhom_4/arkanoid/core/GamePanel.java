@@ -1,12 +1,11 @@
 package com.nhom_4.arkanoid.core;
 
 import javax.swing.*;
+import java.awt.*;
 
 import com.nhom_4.arkanoid.config.Constants;
 import com.nhom_4.arkanoid.input.KeyInput;
 import com.nhom_4.arkanoid.input.MouseInput;
-
-import java.awt.*;
 
 public class GamePanel extends JPanel implements Runnable {
     private Thread loop;
