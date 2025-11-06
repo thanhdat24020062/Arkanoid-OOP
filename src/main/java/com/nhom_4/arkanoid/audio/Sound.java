@@ -1,12 +1,17 @@
 package com.nhom_4.arkanoid.audio;
 
-import javax.sound.sampled.*;
-import java.util.Objects;
+import javax.sound.sampled.Clip;
 
-public final class Sound {
-    private static Clip[] boundClips = new Clip[5];
-    private static Clip[] breakClips = new Clip[3];
-    private static Clip[] shootClips = new Clip[3];
+public final class Sound extends Audio {
+    private static final Clip[] boundClips = new Clip[5];
+    private static final Clip[] breakClips = new Clip[3];
+    private static final Clip[] shootClips = new Clip[3];
+    private static final Clip[] menuHoverClips = new Clip[5];
+    private static Clip gainLifeClip;
+    private static Clip gainShootClip;
+    private static Clip gainPowerClip;
+    private static Clip popClip;
+    private static Clip gameOverClip;
 
     private Sound() {}
 
@@ -20,17 +25,19 @@ public final class Sound {
         for (int i = 0; i < shootClips.length; i++) {
             shootClips[i] = loadClip("/sounds/ShootSound.wav");
         }
-    }
+        for (int i = 0; i < menuHoverClips.length; i++) {
+            menuHoverClips[i] = loadClip("/sounds/BoundSound.wav");
+        }
+        gainLifeClip = loadClip("/sounds/GainLifeSound.wav");
+        gainShootClip = loadClip("/sounds/GainShootSound.wav");
+        gainPowerClip = loadClip("/sounds/GainPowerSound.wav");
+        popClip = loadClip("/sounds/PopSound.wav");
+        gameOverClip = loadClip("/sounds/GameOverSound.wav");
 
-    private static Clip loadClip(String path) {
-        try {
-            AudioInputStream ais = AudioSystem.getAudioInputStream(Objects.requireNonNull(Sound.class.getResourceAsStream(path)));
-            Clip clip = AudioSystem.getClip();
-            clip.open(ais);
-            return clip;
-        } catch (Exception e) {
-            System.err.println("Không thể load âm thanh: " + path);
-            return null;
+        if (boundClips[0] != null) {
+            boundClips[0].start();
+            boundClips[0].setFramePosition(0);
+            boundClips[0].stop();
         }
     }
 
@@ -43,10 +50,17 @@ public final class Sound {
                 return;
             }
         }
-        // Nếu tất cả đang chạy, dùng clip đầu tiên và reset
+        //Nếu tất cả đang chạy, dùng clip đầu tiên và reset
         clips[0].stop();
         clips[0].setFramePosition(0);
         clips[0].start();
+    }
+
+    private static void play(Clip clip) {
+        if (clip != null && !clip.isRunning()) {
+            clip.setFramePosition(0);
+            clip.start();
+        }
     }
 
     public static void playBoundSound() {
@@ -61,10 +75,27 @@ public final class Sound {
         play(shootClips);
     }
 
-    public static void tick() { // đổi mục
-        try { java.awt.Toolkit.getDefaultToolkit().beep(); } catch (Exception ignored) {}
+    public static void playMenuHoverSound() {
+        play(menuHoverClips);
     }
-    public static void blip() { // xác nhận/chọn
-        try { java.awt.Toolkit.getDefaultToolkit().beep(); } catch (Exception ignored) {}
+
+    public static void playGainLifeSound() {
+        play(gainLifeClip);
+    }
+
+    public static void playGainShootSound() {
+        play(gainShootClip);
+    }
+
+    public static void playGainPowerSound() {
+        play(gainPowerClip);
+    }
+
+    public static void playPopSound() {
+        play(popClip);
+    }
+
+    public static void playGameOverSound() {
+        play(gameOverClip);
     }
 }

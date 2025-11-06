@@ -42,7 +42,7 @@ public class Paddle extends Entity {
 
             Color c = hasLasers
                     ? new Color(255, (int) (150 * alpha), 50, (int) (80 * alpha))  // cam mờ nếu có laser
-                    : new Color(100, 180, 255, (int) (50 * alpha));               // xanh mờ khi thường
+                    : new Color(100, 180, 255, (int) (50 * alpha));             // xanh mờ khi thường
 
             Point p = trail.get(i);
             g.setColor(c);

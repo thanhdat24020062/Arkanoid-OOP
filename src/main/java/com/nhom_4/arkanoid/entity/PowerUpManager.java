@@ -1,5 +1,6 @@
 package com.nhom_4.arkanoid.entity;
 
+import com.nhom_4.arkanoid.audio.Sound;
 import com.nhom_4.arkanoid.config.Constants;
 import com.nhom_4.arkanoid.ui.HUD;
 
@@ -26,7 +27,7 @@ public class PowerUpManager {
      */
     public void spawnPowerUp(double brickX, double brickY) {
         // 30%
-        if (random.nextDouble() < 0.3) {
+        if (random.nextDouble() < 1) {
             // Chọn ngẫu nhiên một loại power-up
             PowerUpType[] types = PowerUpType.values();
             PowerUpType randomType = types[random.nextInt(types.length)];
@@ -59,17 +60,25 @@ public class PowerUpManager {
                 // Tăng chiều rộng paddle, nhưng có giới hạn
                 double newWidth = Math.min(paddle.getW() + Constants.PADDLE_WIDTH * 0.1, Constants.PADDLE_WIDTH * 1.5);
                 paddle.setW(newWidth);
+
+                Sound.playGainPowerSound();
                 break;
             case EXTRA_LIFE:
                 hud.addLife();
+
+                Sound.playGainLifeSound();
                 break;
             case FIREBALL: // <-- Thêm case này
                 for (Ball b : balls) {
                     b.activateFireball(5.0);
                 }
+
+                Sound.playGainPowerSound();
                 break;
             case LASER_PADDLE:
                 paddle.activateLasers(7.0);
+
+                Sound.playGainShootSound();
                 break;
             case MULTI_BALL:
                 if (!balls.isEmpty()) {
@@ -79,6 +88,8 @@ public class PowerUpManager {
                     balls.add(clone1);
                     balls.add(clone2);
                 }
+
+                Sound.playPopSound();
                 break;
             default:
                 break;

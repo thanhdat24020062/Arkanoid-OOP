@@ -124,16 +124,16 @@ public class Ball extends Entity {
         // Tạo một quả bóng mới tại đúng vị trí của bóng cũ
         Ball clone = new Ball(this.x, this.y, this.r);
 
-        // Tính góc hiện tại
-        double currentAngle = Math.toDegrees(Math.atan2(-this.vy, this.vx));
-        // Tính góc mới
-        double newAngle = Math.toRadians(currentAngle + angleOffset);
+        double randomOffset = (Math.random() * 120) - 60;
+        double newAngle = Math.toRadians(90 + randomOffset);
+
         // Tính tốc độ hiện tại
         double speed = Math.hypot(this.vx, this.vy);
 
         // Đặt vận tốc mới cho quả bóng clone
         clone.setVx(speed * Math.cos(newAngle));
         clone.setVy(-speed * Math.sin(newAngle));
+
         clone.stickToPaddle(false);
 
         // Nếu bóng gốc là bóng lửa, bóng clone cũng là bóng lửa
