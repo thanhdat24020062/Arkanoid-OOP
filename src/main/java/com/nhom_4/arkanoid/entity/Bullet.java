@@ -2,7 +2,6 @@ package com.nhom_4.arkanoid.entity;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
 
 public class Bullet extends Entity {
     private final double speed = -600; // Tốc độ bay lên (âm)

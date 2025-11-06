@@ -1,7 +1,5 @@
 package com.nhom_4.arkanoid.entity;
 
-import com.nhom_4.arkanoid.audio.Sound;
-
 import java.awt.Graphics2D;
 import java.awt.Image;
 

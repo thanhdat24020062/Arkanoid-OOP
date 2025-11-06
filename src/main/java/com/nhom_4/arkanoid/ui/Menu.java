@@ -44,18 +44,18 @@ public class Menu {
         // Nếu đang mở Exit? thì chỉ xử lý Yes/No
         if (exitConfirm) {
             if (yesBtn.contains(p)) {
-                //Sound.blip();
+                // Sound.blip();
                 exitConfirm = false;
                 return Action.EXIT; // Game xử lý thoát
             }
             if (noBtn.contains(p)) {
-                //Sound.tick();
+                // Sound.tick();
                 exitConfirm = false;
                 return Action.NONE;
             }
             // click ra ngoài panel -> đóng
             if (!exitPanel.contains(p)) {
-                //Sound.tick();
+                // Sound.tick();
                 exitConfirm = false;
             }
             return Action.NONE;
@@ -64,7 +64,7 @@ public class Menu {
         // Bình thường: click các nút menu
         for (int i = 0; i < items.length; i++) {
             if (btn[i].contains(p)) {
-                //Sound.blip();
+                // Sound.blip();
                 if (i == 0)
                     return Action.START;
                 if (i == 1) {
@@ -150,6 +150,7 @@ public class Menu {
     }
 
     private static int lastHoverIndex = -1;
+
     private static void playHoverIfChanged(int current) {
         if (current != lastHoverIndex) {
             if (current != -1) {
@@ -160,6 +161,7 @@ public class Menu {
     }
 
     private static int lastExitHoverIndex = -1;
+
     private static void playExitHoverIfChanged(int current) {
         if (current != lastExitHoverIndex) {
             if (current != -1) {
