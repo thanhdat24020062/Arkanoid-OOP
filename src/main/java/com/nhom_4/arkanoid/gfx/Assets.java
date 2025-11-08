@@ -8,8 +8,10 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
+import java.util.List;
 import java.util.Map;
 
 public class Assets {
@@ -27,6 +29,9 @@ public class Assets {
     public static Image ball;
     public static Map<Integer, Image> bricks;
 
+    public static List<Image> silverBrick = new ArrayList<>();
+    public static List<Image> goldBrick = new ArrayList<>();
+
     public static void load() {
         MENU_BG = Files.loadImageCP("/images/menu_bg.png", Constants.WIDTH, Constants.HEIGHT);
         BUTTON_START = Files.loadImageCP("/images/button_menu.png", 240, 120);
@@ -42,10 +47,39 @@ public class Assets {
         ball = Files.loadImage("/images/ball.png");
 
         bricks = new HashMap<>();
-        bricks.put(1, Files.loadImage("/images/brick_blue.png")); // Loại 1 là gạch xanh dương
-        bricks.put(2, Files.loadImage("/images/brick_cyan.png")); // Loại 2 là gạch xanh lơ
-        bricks.put(3, Files.loadImage("/images/brick_gold.png")); // Loại 3 là gạch vàng
-        bricks.put(4, Files.loadImage("/images/brick_orange.png")); // Loại 4 là gạch cam
-        bricks.put(5, Files.loadImage("/images/brick_silver_2.png"));
+        bricks.put(1, Files.loadImage("/images/brick_blue.png"));
+        bricks.put(2, Files.loadImage("/images/brick_cyan.png"));
+        bricks.put(3, Files.loadImage("/images/brick_orange.png"));
+
+        goldBrick = loadAnimationFrames("/images/brick_gold", 10);
+        if (!goldBrick.isEmpty()) {
+            bricks.put(4, goldBrick.getFirst());
+        } else {
+            bricks.put(4, Files.loadImage("/images/brick_silver.png"));
+        }
+
+        silverBrick = loadAnimationFrames("/images/brick_silver", 10);
+        if (!silverBrick.isEmpty()) {
+            bricks.put(5, silverBrick.getFirst());
+        } else {
+            bricks.put(5, Files.loadImage("/images/brick_silver.png"));
+        }
+
+        bricks.put(6, Files.loadImage("/images/brick_silver_broken.png"));
+        bricks.put(7, Files.loadImage("/images/brick_steel.png"));
+    }
+
+    private static List<Image> loadAnimationFrames(String folderPath, int frameNumber) {
+        List<Image> frames = new ArrayList<>();
+        for (int i = 0; i < frameNumber; i++) {
+            String path = folderPath + "/frame" + i + ".png";
+            Image frame = Files.loadImage(path);
+            if (frame != null) {
+                frames.add(frame);
+            } else {
+                System.err.println("Assets: Không load được frame animation: " + path);
+            }
+        }
+        return frames;
     }
 }

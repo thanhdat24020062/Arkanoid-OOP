@@ -3,28 +3,20 @@ package com.nhom_4.arkanoid.util;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.nhom_4.arkanoid.util.Pair; 
 
 public class LevelLoader {
 
     public static Pair<Integer, Integer>[][] loadMap(String filename) {
     List<List<Pair<Integer, Integer>>> rows = new ArrayList<>();
-    
-    // Đường dẫn đầy đủ, bắt đầu từ gốc Classpath
-    // Ví dụ: /levels/level1.csv
+
     String resourcePath = "/levels/" + filename; 
 
-    // SỬ DỤNG CLASS.getResourceAsStream() VÀ ĐƯỜNG DẪN TUYỆT ĐỐI (GIỐNG CÁCH AUDIO HOẠT ĐỘNG)
-    // Audio dùng Class.getResource() trả về URL, ta dùng Class.getResourceAsStream() trả về InputStream
     java.io.InputStream is = LevelLoader.class.getResourceAsStream(resourcePath);
     
     try {
         if (is == null) {
-            // Nếu stream là null, ném ra lỗi chỉ rõ đường dẫn đã tìm kiếm
             throw new IOException("Tài nguyên không tồn tại trong Classpath: " + resourcePath);
         }
         
@@ -69,6 +61,9 @@ public class LevelLoader {
             case "B2": return new Pair<>(2, 2);
             case "B3": return new Pair<>(2, 3);
             case "B5": return new Pair<>(2, 5);
+
+            // Unbreakable Brick
+            case "UB": return new Pair<>(10, 7);
             default: 
                 System.err.println("CẢNH BÁO: Ký tự map không xác định: " + key);
                 return new Pair<>(1, 1);
