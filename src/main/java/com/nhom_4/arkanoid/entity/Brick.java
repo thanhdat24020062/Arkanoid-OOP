@@ -11,7 +11,7 @@ public class Brick extends Entity {
     private int health;
     private int type;
     private Image brickImage;
-    private Animation animation;
+    protected Animation animation;
 
     public Brick(double x, double y, double w, double h, int health, Image image) {
         this.x = x;
@@ -20,7 +20,7 @@ public class Brick extends Entity {
         this.h = h;
         this.health = health;
         this.brickImage = image;
-        this.type = -1;
+        this.type = 0;
     }
 
     public Brick(double x, double y, double w, double h, int health, Image image, int type) {
@@ -68,9 +68,14 @@ public class Brick extends Entity {
     }
 
     private void updateTexture() {
+        if (type == 4 && health == 1) {
+            type = 40;
+            brickImage = Assets.bricks.get(40);
+            animation = null;
+        }
         if (type == 5 && health == 1) {
-            type = 6;
-            brickImage = Assets.bricks.get(6);
+            type = 50;
+            brickImage = Assets.bricks.get(50);
             animation = null;
         }
     }

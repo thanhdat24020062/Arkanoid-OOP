@@ -11,14 +11,10 @@ import java.awt.Image;
 
 import com.nhom_4.arkanoid.audio.Music;
 import com.nhom_4.arkanoid.audio.Sound;
+import com.nhom_4.arkanoid.entity.*;
 import com.nhom_4.arkanoid.ui.Menu;
 
 import com.nhom_4.arkanoid.config.Constants;
-import com.nhom_4.arkanoid.entity.Ball;
-import com.nhom_4.arkanoid.entity.Brick;
-import com.nhom_4.arkanoid.entity.Bullet;
-import com.nhom_4.arkanoid.entity.Paddle;
-import com.nhom_4.arkanoid.entity.PowerUpManager;
 import com.nhom_4.arkanoid.gfx.Assets;
 import com.nhom_4.arkanoid.gfx.Renderer;
 import com.nhom_4.arkanoid.input.KeyInput;
@@ -112,7 +108,12 @@ public class Game {
                 double brickX = Constants.WALL_THICK + j * brickWidth;
                 double brickY = Constants.TOP_OFFSET + i * brickHeight;
 
-                newBricks.add(new Brick(brickX, brickY, brickWidth, brickHeight, health, brickImage, brickType));
+                if (brickType == 6) {
+                    newBricks.add(new ExplosionBrick(brickX, brickY, brickWidth,
+                            brickHeight, health, brickImage, brickType, newBricks, powerUpManager));
+                } else {
+                    newBricks.add(new Brick(brickX, brickY, brickWidth, brickHeight, health, brickImage, brickType));
+                }
             }
         }
         return newBricks;
@@ -276,6 +277,7 @@ public class Game {
         if (balls.isEmpty()) {
             hud.loseLife();
             powerUpManager.reset();
+            bullets.clear();
             if (hud.getLives() > 0) {
                 Ball newBall = new Ball(paddle.centerX(), paddle.getY() - Constants.BALL_RADIUS - 2, Constants.BALL_RADIUS);
                 newBall.stickToPaddle(true);
@@ -343,6 +345,10 @@ public class Game {
                     if (destroyed) {
                         hud.addScore(50);
                         powerUpManager.spawnPowerUp(br.centerX(), br.centerY());
+
+                        if (br instanceof ExplosionBrick) {
+                            ((ExplosionBrick) br).explode();
+                        }
                     } else {
                         hud.addScore(10);
                     }

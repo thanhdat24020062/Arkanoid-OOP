@@ -54,7 +54,7 @@ public class LevelLoader {
             case "A1": return new Pair<>(1, 1);
             case "A2": return new Pair<>(1, 2);
             case "A3": return new Pair<>(1, 3);
-            case "A4": return new Pair<>(1, 4);
+            case "A4": return new Pair<>(2, 4);
             
             // Gạch 2 Máu (Health 2)
             case "B1": return new Pair<>(2, 1);
@@ -63,7 +63,10 @@ public class LevelLoader {
             case "B5": return new Pair<>(2, 5);
 
             // Unbreakable Brick
-            case "UB": return new Pair<>(10, 7);
+            case "UB": return new Pair<>(10, 0);
+
+            // Explosion
+            case "EX": return new Pair<>(1, 6);
             default: 
                 System.err.println("CẢNH BÁO: Ký tự map không xác định: " + key);
                 return new Pair<>(1, 1);

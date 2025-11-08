@@ -31,6 +31,7 @@ public class Assets {
 
     public static List<Image> silverBrick = new ArrayList<>();
     public static List<Image> goldBrick = new ArrayList<>();
+    public static List<Image> explosionBrick = new ArrayList<>();
 
     public static void load() {
         MENU_BG = Files.loadImageCP("/images/menu_bg.png", Constants.WIDTH, Constants.HEIGHT);
@@ -47,6 +48,7 @@ public class Assets {
         ball = Files.loadImage("/images/ball.png");
 
         bricks = new HashMap<>();
+        bricks.put(0, Files.loadImage("/images/brick_steel.png"));
         bricks.put(1, Files.loadImage("/images/brick_blue.png"));
         bricks.put(2, Files.loadImage("/images/brick_cyan.png"));
         bricks.put(3, Files.loadImage("/images/brick_orange.png"));
@@ -65,8 +67,15 @@ public class Assets {
             bricks.put(5, Files.loadImage("/images/brick_silver.png"));
         }
 
-        bricks.put(6, Files.loadImage("/images/brick_silver_broken.png"));
-        bricks.put(7, Files.loadImage("/images/brick_steel.png"));
+        explosionBrick = loadAnimationFrames("/images/brick_bomb", 8);
+        if (!explosionBrick.isEmpty()) {
+            bricks.put(6, explosionBrick.getFirst());
+        } else {
+            bricks.put(6, Files.loadImage("/images/brick_bomb.png"));
+        }
+
+        bricks.put(40, Files.loadImage("/images/brick_gold_broken.png"));
+        bricks.put(50, Files.loadImage("/images/brick_silver_broken.png"));
     }
 
     private static List<Image> loadAnimationFrames(String folderPath, int frameNumber) {

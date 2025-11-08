@@ -8,13 +8,15 @@ import com.nhom_4.arkanoid.input.KeyInput;
 import com.nhom_4.arkanoid.input.MouseInput;
 
 public class GamePanel extends JPanel implements Runnable {
+    private static GamePanel instance;
+
     private Thread loop;
     private boolean running = false;
     private final Game game = new Game();
     private final KeyInput keys = new KeyInput();
     private final MouseInput mouse = new MouseInput();
 
-    public GamePanel() {
+    private GamePanel() {
         setPreferredSize(new Dimension(Constants.WIDTH, Constants.HEIGHT));
         setBackground(Constants.BG_COLOR);
         setFocusable(true);
@@ -25,6 +27,13 @@ public class GamePanel extends JPanel implements Runnable {
         addMouseListener(mouse);
         addMouseMotionListener(mouse); // nếu muốn hover sau này
         start();
+    }
+
+    public static GamePanel getInstance() {
+        if (instance == null) {
+            instance = new GamePanel();
+        }
+        return instance;
     }
 
     private void start() {

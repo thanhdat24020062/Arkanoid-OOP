@@ -19,7 +19,7 @@ public class App {
             JFrame f = new JFrame("Arkanoid");
             f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             f.setResizable(false);
-            f.setContentPane(new GamePanel());
+            f.setContentPane(GamePanel.getInstance());
             f.pack();
             f.setLocationRelativeTo(null);
             f.setVisible(true);
