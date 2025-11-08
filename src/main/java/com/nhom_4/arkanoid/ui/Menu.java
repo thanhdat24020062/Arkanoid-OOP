@@ -44,18 +44,15 @@ public class Menu {
         // Nếu đang mở Exit? thì chỉ xử lý Yes/No
         if (exitConfirm) {
             if (yesBtn.contains(p)) {
-                // Sound.blip();
                 exitConfirm = false;
                 return Action.EXIT; // Game xử lý thoát
             }
             if (noBtn.contains(p)) {
-                // Sound.tick();
                 exitConfirm = false;
                 return Action.NONE;
             }
             // click ra ngoài panel -> đóng
             if (!exitPanel.contains(p)) {
-                // Sound.tick();
                 exitConfirm = false;
             }
             return Action.NONE;

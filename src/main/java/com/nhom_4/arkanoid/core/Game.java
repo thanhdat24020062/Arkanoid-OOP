@@ -112,13 +112,14 @@ public class Game {
                 double brickX = Constants.WALL_THICK + j * brickWidth;
                 double brickY = Constants.TOP_OFFSET + i * brickHeight;
 
-                newBricks.add(new Brick(brickX, brickY, brickWidth, brickHeight, health, brickImage));
+                newBricks.add(new Brick(brickX, brickY, brickWidth, brickHeight, health, brickImage, brickType));
             }
         }
         return newBricks;
     }
 
     private boolean nextLevel() {
+        powerUpManager.reset();
         currentLevelIndex++;
         return currentLevelIndex < levelMaps.size();
     }
@@ -225,6 +226,10 @@ public class Game {
             }
         }
 
+        for (Brick br : bricks) {
+            br.update(dt);
+        }
+
         if (paddle.hasLasers()) {
             List<Bullet> newBullets = paddle.shoot();
             if (newBullets != null)
@@ -269,7 +274,8 @@ public class Game {
         }
 
         if (balls.isEmpty()) {
-            hud.loseLife(); 
+            hud.loseLife();
+            powerUpManager.reset();
             if (hud.getLives() > 0) {
                 Ball newBall = new Ball(paddle.centerX(), paddle.getY() - Constants.BALL_RADIUS - 2, Constants.BALL_RADIUS);
                 newBall.stickToPaddle(true);
@@ -277,7 +283,7 @@ public class Game {
                 newBall.setVy(0);
                 balls.add(newBall);
                 paddle.deactivateLasers(); 
-                //showPressSpace = true;     
+                showPressSpace = true;
             } else {
                 state = GameState.GAME_OVER;
             }
@@ -324,12 +330,14 @@ public class Game {
 
                 if (ballRect.intersects(br.getRect())) {
 
-                    if (!b.isFireball()) {
+                    if (br.isUnBreakable()) {
                         Resolver.resolveBallBrick(b, br);
-                        //Âm thanh nảy bóng
-                        Sound.playBoundSound();
-                    } else {
+                        Sound.playMetalSound();
+                    } if (b.isFireball()) {
                         Sound.playBreakSound();
+                    } else {
+                        Resolver.resolveBallBrick(b, br);
+                        Sound.playBoundSound();
                     }
                     boolean destroyed = br.hit();
                     if (destroyed) {
@@ -347,7 +355,7 @@ public class Game {
 
     private boolean allCleared() {
         for (Brick b : bricks)
-            if (b.isAlive())
+            if (!b.isUnBreakable() && b.isAlive())
                 return false;
         return true;
     }
