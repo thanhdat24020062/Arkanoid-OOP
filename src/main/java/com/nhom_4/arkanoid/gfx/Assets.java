@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Assets {
+    public static BufferedImage LEADERBOARD;
     public static BufferedImage BUTTON_SMALL = null;
     public static BufferedImage EXIT_DIALOG;
     public static BufferedImage MENU_BG;
@@ -36,6 +37,7 @@ public class Assets {
 
     public static void load() {
         MENU_BG = Files.loadImageCP("/images/menu_bg.png", Constants.WIDTH, Constants.HEIGHT);
+        LEADERBOARD = Files.loadImageCP("/images/leaderboard.png", Constants.WIDTH, Constants.HEIGHT);
         BUTTON_START = Files.loadImageCP("/images/button_menu.png", 240, 120);
         BUTTON_HOW_TO_PLAY = Files.loadImageCP("/images/button_menu.png", 460, 120);
         BUTTON_EXIT = Files.loadImageCP("/images/button_menu.png", 200, 120);

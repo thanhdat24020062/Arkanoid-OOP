@@ -1,20 +1,19 @@
 package com.nhom_4.arkanoid.core;
 
-import javax.swing.*;
-import java.awt.*;
-
 import com.nhom_4.arkanoid.config.Constants;
 import com.nhom_4.arkanoid.input.KeyInput;
 import com.nhom_4.arkanoid.input.MouseInput;
 
+import javax.swing.*;
+import java.awt.*;
+
 public class GamePanel extends JPanel implements Runnable {
     private static GamePanel instance;
-
-    private Thread loop;
-    private boolean running = false;
     private final Game game = new Game();
     private final KeyInput keys = new KeyInput();
     private final MouseInput mouse = new MouseInput();
+    private Thread loop;
+    private boolean running = false;
 
     private GamePanel() {
         setPreferredSize(new Dimension(Constants.WIDTH, Constants.HEIGHT));
@@ -22,7 +21,7 @@ public class GamePanel extends JPanel implements Runnable {
         setFocusable(true);
         addKeyListener(keys);
         game.bindInput(keys);
-        
+
         game.bindInput(mouse);
         addMouseListener(mouse);
         addMouseMotionListener(mouse); // nếu muốn hover sau này
@@ -69,6 +68,7 @@ public class GamePanel extends JPanel implements Runnable {
             try {
                 Thread.sleep(2);
             } catch (InterruptedException ignored) {
+                ignored.printStackTrace();
             }
         }
     }

@@ -27,5 +27,5 @@ public final class Constants {
     // Ball
     public static final double BALL_RADIUS = 9;
     public static final double BALL_SPEED_CAP = 560;
-    public static final double BALL_SPEEDUP_MUL = 1.015;// tăng 1.5% tốc độ mỗi lần va chạm
+    public static final double BALL_SPEEDUP_MUL = 1.02;// tăng 2% tốc độ mỗi lần va chạm
 }

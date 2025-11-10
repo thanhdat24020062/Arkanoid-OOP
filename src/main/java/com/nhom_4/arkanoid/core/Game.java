@@ -1,42 +1,39 @@
 package com.nhom_4.arkanoid.core;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import java.awt.Image;
-
 import com.nhom_4.arkanoid.audio.Music;
 import com.nhom_4.arkanoid.audio.Sound;
-import com.nhom_4.arkanoid.entity.*;
-import com.nhom_4.arkanoid.ui.Menu;
-
 import com.nhom_4.arkanoid.config.Constants;
+import com.nhom_4.arkanoid.entity.*;
 import com.nhom_4.arkanoid.gfx.Assets;
 import com.nhom_4.arkanoid.gfx.Renderer;
 import com.nhom_4.arkanoid.input.KeyInput;
 import com.nhom_4.arkanoid.input.MouseInput;
 import com.nhom_4.arkanoid.physics.Collision;
 import com.nhom_4.arkanoid.physics.Resolver;
-import com.nhom_4.arkanoid.ui.HUD;
-import com.nhom_4.arkanoid.ui.Screens;
-import com.nhom_4.arkanoid.util.Pair;
+import com.nhom_4.arkanoid.ui.*;
+import com.nhom_4.arkanoid.ui.Menu;
 import com.nhom_4.arkanoid.util.LevelLoader;
+import com.nhom_4.arkanoid.util.Pair;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class Game {
-    private GameState state = GameState.MENU;
-    private GameState previousState = null;
     private final HUD hud = new HUD();
     private final Screens screens = new Screens();
     private final Menu menu = new Menu();
+    private final Leaderboard leaderboard = new Leaderboard();
     private final PowerUpManager powerUpManager = new PowerUpManager();
     private final List<Bullet> bullets = new ArrayList<>();
-    private List<Pair<Integer, Integer>[][]> levelMaps;
     private final List<ExplosionEffect> explosions = new ArrayList<>();
-
+    private final LeaderBoardScreen leaderBoardScreen = new LeaderBoardScreen();
+    private GameState state = GameState.MENU;
+    private GameState previousState = null;
+    private List<Pair<Integer, Integer>[][]> levelMaps;
     private int currentLevelIndex;
 
     private Paddle paddle;
@@ -45,6 +42,11 @@ public class Game {
     private KeyInput keys;
     private MouseInput mouse;
     private boolean showPressSpace = true;
+
+    public Game() {
+        loadAllLevelMaps();
+        startNewGame();
+    }
 
     public void setFps(int fps) {
         hud.setFps(fps);
@@ -58,11 +60,6 @@ public class Game {
         this.mouse = m;
     }
 
-    public Game() {
-        loadAllLevelMaps();
-        startNewGame();
-    }
-
     private void loadAllLevelMaps() {
         levelMaps = new ArrayList<>();
 
@@ -70,7 +67,7 @@ public class Game {
         if (level1 != null) {
             levelMaps.add(level1);
         }
-    
+
         Pair<Integer, Integer>[][] level2 = LevelLoader.loadMap("mapLevel2.csv");
         if (level2 != null) {
             levelMaps.add(level2);
@@ -143,7 +140,7 @@ public class Game {
         double pw = Constants.PADDLE_WIDTH;
         paddle = new Paddle(Constants.WIDTH / 2.0 - pw / 2.0, Constants.HEIGHT - 50, pw, Constants.PADDLE_HEIGHT,
                 Constants.PADDLE_SPEED);
-                
+
         balls = new ArrayList<>();
         Ball initialBall = new Ball(paddle.centerX(), paddle.getY() - Constants.BALL_RADIUS - 2, Constants.BALL_RADIUS);
         balls.add(initialBall);
@@ -194,6 +191,8 @@ public class Game {
                 if (act == Menu.Action.START) {
                     showPressSpace = true;
                     state = GameState.PLAYING;
+                } else if (act == Menu.Action.LEADERBOARD) {
+                    state = GameState.LEADERBOARD;
                 } else if (act == Menu.Action.EXIT)
                     System.exit(0);
                 break;
@@ -201,7 +200,16 @@ public class Game {
                 if (keys.consumeSpace())
                     state = GameState.PLAYING;
                 break;
+            case LEADERBOARD:
+                leaderBoardScreen.update(mouse);
+                if (leaderBoardScreen.isBackPressed()) {
+                    state = GameState.MENU;
+                }
+                break;
             case GAME_OVER:
+                if (keys.isPressedR())
+                    startNewGame();
+                break;
             case YOU_WIN:
                 if (keys.isPressedR())
                     startNewGame();
@@ -215,7 +223,7 @@ public class Game {
     private void updatePlayingState(double dt) {
         double dir = (keys.isLeft() ? -1 : 0) + (keys.isRight() ? 1 : 0);
         paddle.update(dt, dir);
-        
+
         for (Ball b : balls) {
             if (b.isSticking()) {
                 b.setX(paddle.centerX());
@@ -243,7 +251,7 @@ public class Game {
         handleBullets(dt);
 
         Iterator<ExplosionEffect> it = explosions.iterator();
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             ExplosionEffect e = it.next();
             e.update(dt);
             if (e.isFinished()) it.remove();
@@ -293,10 +301,15 @@ public class Game {
                 newBall.setVx(0);
                 newBall.setVy(0);
                 balls.add(newBall);
-                paddle.deactivateLasers(); 
+                paddle.deactivateLasers();
                 showPressSpace = true;
             } else {
                 state = GameState.GAME_OVER;
+
+                String name = JOptionPane.showInputDialog("Nhập tên của bạn:");
+                if (name != null && !name.trim().isEmpty()) {
+                    leaderboard.addScore(name.trim(), hud.getScore());
+                }
             }
         }
 
@@ -325,7 +338,7 @@ public class Game {
                         brick.getW(),
                         brick.getH()));
                 Sound.playExplosionSound();
-                List<Brick> affected  = ((ExplosionBrick) brick).explode();
+                List<Brick> affected = ((ExplosionBrick) brick).explode();
                 for (Brick br : affected) {
                     brickGetHit(br);
                 }
@@ -417,10 +430,13 @@ public class Game {
             case PLAYING:
                 if (showPressSpace) {
                     Renderer.renderText(g, "Press Space to Start", Assets.fontPixels_40,
-                            Constants.WIDTH / 2 - 250,Constants.HEIGHT / 2, Color.WHITE);
+                            (float) Constants.WIDTH / 2 - 250, (float) Constants.HEIGHT / 2, Color.WHITE);
                 }
                 break;
             case PAUSED:
+                break;
+            case LEADERBOARD:
+                leaderBoardScreen.render(g);
                 break;
             case GAME_OVER:
                 screens.drawCenterText(g, "GAME OVER", "Press R to restart");

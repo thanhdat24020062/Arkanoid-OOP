@@ -22,6 +22,10 @@ public class HUD {
         score += s;
     }
 
+    public int getScore() {
+        return score;
+    }
+
     public void loseLife() {
         lives--;
     }
