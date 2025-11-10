@@ -35,6 +35,7 @@ public class Game {
     private final PowerUpManager powerUpManager = new PowerUpManager();
     private final List<Bullet> bullets = new ArrayList<>();
     private List<Pair<Integer, Integer>[][]> levelMaps;
+    private final List<ExplosionEffect> explosions = new ArrayList<>();
 
     private int currentLevelIndex;
 
@@ -108,6 +109,7 @@ public class Game {
                 double brickX = Constants.WALL_THICK + j * brickWidth;
                 double brickY = Constants.TOP_OFFSET + i * brickHeight;
 
+                // Type 6 = Explosion Brick
                 if (brickType == 6) {
                     newBricks.add(new ExplosionBrick(brickX, brickY, brickWidth,
                             brickHeight, health, brickImage, brickType, newBricks, powerUpManager));
@@ -240,6 +242,13 @@ public class Game {
         powerUpManager.update(dt, paddle, hud, balls);
         handleBullets(dt);
 
+        Iterator<ExplosionEffect> it = explosions.iterator();
+        while(it.hasNext()) {
+            ExplosionEffect e = it.next();
+            e.update(dt);
+            if (e.isFinished()) it.remove();
+        }
+
         Collision.reflectBallOnWallsList(balls);
         handleBricks();
         handlePaddleCollision();
@@ -301,6 +310,29 @@ public class Game {
         }
     }
 
+    private void brickGetHit(Brick brick) {
+        boolean destroyed = brick.hit();
+
+        hud.addScore(destroyed ? 50 : 10);
+
+        if (destroyed) {
+            powerUpManager.spawnPowerUp(brick.centerX(), brick.centerY());
+
+            if (brick instanceof ExplosionBrick) {
+                explosions.add(new ExplosionEffect(
+                        brick.centerX() - 1.5 * brick.getW(),
+                        brick.centerY() - 1.5 * brick.getH(),
+                        brick.getW(),
+                        brick.getH()));
+                Sound.playExplosionSound();
+                List<Brick> affected  = ((ExplosionBrick) brick).explode();
+                for (Brick br : affected) {
+                    brickGetHit(br);
+                }
+            }
+        }
+    }
+
     private void handleBullets(double dt) {
         Iterator<Bullet> bulletIterator = bullets.iterator();
         while (bulletIterator.hasNext()) {
@@ -309,13 +341,8 @@ public class Game {
             boolean hit = false;
             for (Brick brick : bricks) {
                 if (brick.isAlive() && bullet.getRect().intersects(brick.getRect())) {
-                    boolean destroyed = brick.hit();
-                    hud.addScore(destroyed ? 50 : 10);
                     hit = true;
-
-                    if (destroyed) {
-                        powerUpManager.spawnPowerUp(brick.centerX(), brick.centerY());
-                    }
+                    brickGetHit(brick);
                     break;
                 }
             }
@@ -329,29 +356,18 @@ public class Game {
             Rectangle2D.Double ballRect = b.getRect();
             for (Brick br : bricks) {
                 if (!br.isAlive()) continue;
-
                 if (ballRect.intersects(br.getRect())) {
 
                     if (br.isUnBreakable()) {
                         Resolver.resolveBallBrick(b, br);
                         Sound.playMetalSound();
-                    } if (b.isFireball()) {
+                    } else if (b.isFireball()) {
                         Sound.playBreakSound();
                     } else {
                         Resolver.resolveBallBrick(b, br);
                         Sound.playBoundSound();
                     }
-                    boolean destroyed = br.hit();
-                    if (destroyed) {
-                        hud.addScore(50);
-                        powerUpManager.spawnPowerUp(br.centerX(), br.centerY());
-
-                        if (br instanceof ExplosionBrick) {
-                            ((ExplosionBrick) br).explode();
-                        }
-                    } else {
-                        hud.addScore(10);
-                    }
+                    brickGetHit(br);
                     b.speedUp(Constants.BALL_SPEEDUP_MUL, Constants.BALL_SPEED_CAP);
                     break;
                 }
@@ -386,6 +402,10 @@ public class Game {
         powerUpManager.render(g);
         hud.render(g);
 
+        for (ExplosionEffect e : explosions) {
+            e.render(g);
+        }
+
         renderOverlay(g);
     }
 
@@ -396,8 +416,8 @@ public class Game {
                 break;
             case PLAYING:
                 if (showPressSpace) {
-                    Renderer.renderText(g, "Press Space to Start", Assets.fontPixels_40, Constants.WIDTH / 2 - 250,
-                            Constants.HEIGHT / 2, Color.WHITE);
+                    Renderer.renderText(g, "Press Space to Start", Assets.fontPixels_40,
+                            Constants.WIDTH / 2 - 250,Constants.HEIGHT / 2, Color.WHITE);
                 }
                 break;
             case PAUSED:

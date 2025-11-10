@@ -32,6 +32,7 @@ public class Assets {
     public static List<Image> silverBrick = new ArrayList<>();
     public static List<Image> goldBrick = new ArrayList<>();
     public static List<Image> explosionBrick = new ArrayList<>();
+    public static List<Image> explosionEffect = new ArrayList<>();
 
     public static void load() {
         MENU_BG = Files.loadImageCP("/images/menu_bg.png", Constants.WIDTH, Constants.HEIGHT);
@@ -76,6 +77,8 @@ public class Assets {
 
         bricks.put(40, Files.loadImage("/images/brick_gold_broken.png"));
         bricks.put(50, Files.loadImage("/images/brick_silver_broken.png"));
+
+        explosionEffect = loadAnimationFrames("/images/explosion_effect", 8);
     }
 
     private static List<Image> loadAnimationFrames(String folderPath, int frameNumber) {

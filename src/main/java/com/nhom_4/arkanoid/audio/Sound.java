@@ -8,6 +8,7 @@ public final class Sound extends Audio {
     private static final Clip[] shootClips = new Clip[3];
     private static final Clip[] metalClips = new Clip[3];
     private static final Clip[] menuHoverClips = new Clip[5];
+    private static final Clip[] explosionClips = new Clip[3];
     private static Clip gainLifeClip;
     private static Clip gainShootClip;
     private static Clip gainPowerClip;
@@ -31,6 +32,9 @@ public final class Sound extends Audio {
         }
         for (int i = 0; i < menuHoverClips.length; i++) {
             menuHoverClips[i] = loadClip("/sounds/BoundSound.wav");
+        }
+        for (int i = 0; i < explosionClips.length; i++) {
+            explosionClips[i] = loadClip("/sounds/ExplosionSound.wav");
         }
         gainLifeClip = loadClip("/sounds/GainLifeSound.wav");
         gainShootClip = loadClip("/sounds/GainShootSound.wav");
@@ -85,6 +89,10 @@ public final class Sound extends Audio {
 
     public static void playMenuHoverSound() {
         play(menuHoverClips);
+    }
+
+    public static void playExplosionSound() {
+        play(explosionClips);
     }
 
     public static void playGainLifeSound() {
