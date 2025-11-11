@@ -26,6 +26,6 @@ public final class Constants {
 
     // Ball
     public static final double BALL_RADIUS = 9;
-    public static final double BALL_SPEED_CAP = 600;
-    public static final double BALL_SPEEDUP_MUL = 1.05; // tang toc sao lan va cham
+    public static final double BALL_SPEED_CAP = 550;
+    public static final double BALL_SPEEDUP_MUL = 1.03; // tang toc sao lan va cham
 }

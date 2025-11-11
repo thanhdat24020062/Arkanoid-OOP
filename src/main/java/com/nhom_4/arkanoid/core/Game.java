@@ -325,6 +325,10 @@ public class Game {
                 loadCurrentLevel();
                 state = GameState.PAUSED;
             } else {
+                String name = JOptionPane.showInputDialog("Nhập tên của bạn:");
+                if (name != null && !name.trim().isEmpty()) {
+                    leaderboard.addScore(name.trim(), hud.getScore());
+                }
                 state = GameState.YOU_WIN;
             }
         }
