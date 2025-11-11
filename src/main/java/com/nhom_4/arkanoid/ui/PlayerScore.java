@@ -1,6 +1,8 @@
 package com.nhom_4.arkanoid.ui;
 
-public class PlayerScore implements Comparable<PlayerScore> {
+import java.io.Serializable;
+
+public class PlayerScore implements Comparable<PlayerScore>, Serializable {
     private final String name;
     private final int score;
 

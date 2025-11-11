@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class LeaderBoard {
+public class LeaderBoard implements Serializable {
     private static final String FILE_NAME = "leaderboard.txt";
     private final List<PlayerScore> scores = new ArrayList<>();
 

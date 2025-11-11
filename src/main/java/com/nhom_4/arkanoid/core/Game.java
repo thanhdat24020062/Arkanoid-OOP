@@ -19,19 +19,21 @@ import com.nhom_4.arkanoid.util.SaveLoadManager;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 public class Game implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private transient HUD hud;
     private transient Screens screens;
     private transient Menu menu;
     private LeaderBoard leaderboard;
-    private final PowerUpManager powerUpManager;
+    private PowerUpManager powerUpManager;
     private final List<Bullet> bullets;
     private List<ExplosionEffect> explosions;
     private LeaderBoardScreen leaderBoardScreen;
@@ -48,6 +50,7 @@ public class Game implements Serializable {
     private boolean showPressSpace;
 
     public static Game createOrLoadGame(KeyInput k, MouseInput m) {
+        Assets.load();
         Game game = SaveLoadManager.loadGame();
 
         if (game == null) {
@@ -60,9 +63,16 @@ public class Game implements Serializable {
                 game.state = GameState.PAUSED;
             }
         }
+        game.restoreAfterLoad();
         game.initTransientFields(k, m);
 
         return game;
+    }
+
+    public void restoreAfterLoad() {
+        for (Brick b : bricks) {
+            b.restoreAfterLoad();
+        }
     }
 
     public Game() {
@@ -88,6 +98,12 @@ public class Game implements Serializable {
         this.leaderBoardScreen = new LeaderBoardScreen();
         this.keys = k;
         this.mouse = m;
+        if (this.explosions == null) {
+            this.explosions = new ArrayList<>();
+        }
+        if (this.powerUpManager == null) {
+            this.powerUpManager = new PowerUpManager();
+        }
         loadAllLevelMaps();
     }
 

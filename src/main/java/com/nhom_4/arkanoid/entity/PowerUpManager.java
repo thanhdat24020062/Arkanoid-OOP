@@ -5,12 +5,13 @@ import com.nhom_4.arkanoid.config.Constants;
 import com.nhom_4.arkanoid.ui.HUD;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-public class PowerUpManager {
+public class PowerUpManager implements Serializable {
     private final List<PowerUp> activePowerUps;
     private final Random random;
 

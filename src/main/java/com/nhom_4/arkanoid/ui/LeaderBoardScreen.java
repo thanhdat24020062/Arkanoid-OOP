@@ -5,11 +5,12 @@ import com.nhom_4.arkanoid.input.MouseInput;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 import java.util.List;
 
 import static com.nhom_4.arkanoid.config.Constants.*;
 
-public class LeaderBoardScreen {
+public class LeaderBoardScreen implements Serializable {
     private final Rectangle backButton = new Rectangle(20, 20, 120, 60);
     private boolean backPressed = false;
 
