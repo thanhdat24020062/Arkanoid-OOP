@@ -37,7 +37,7 @@ public class LeaderBoardScreen {
         g.drawString("LEADERBOARD", WIDTH / 2 - 180, 80);
 
         // Điểm
-        Leaderboard lb = new Leaderboard();
+        LeaderBoard lb = new LeaderBoard();
         List<PlayerScore> scores = lb.getScores();
         g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 24));
         int startY = 150, gap = 30;

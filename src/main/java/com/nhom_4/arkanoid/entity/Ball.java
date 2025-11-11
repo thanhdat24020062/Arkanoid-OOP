@@ -3,20 +3,32 @@ package com.nhom_4.arkanoid.entity;
 import com.nhom_4.arkanoid.gfx.Assets; // <-- Thêm import này
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.List;
 
 public class Ball extends Entity {
+    private static final long serialVersionUID = 1L;
+
     private double vx, vy, r;
     private boolean stickToPaddle = true;
-    private final Random rng = new Random();
+    private transient Random rng = new Random();
     private boolean isFireball = false;
     private double fireballTimer = 0;
 
     // Thêm hiệu ứng vệt sáng
-    private final List<Point> trail = new ArrayList<>();
+    private transient List<Point> trail = new ArrayList<>();
     private static final int TRAIL_LENGTH = 30;
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        
+        this.rng = new Random();
+        
+        this.trail = new ArrayList<>(); 
+    }
 
     public Ball(double x, double y, double r) {
         this.x = x;

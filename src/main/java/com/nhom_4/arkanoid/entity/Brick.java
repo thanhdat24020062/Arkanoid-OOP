@@ -2,16 +2,38 @@ package com.nhom_4.arkanoid.entity;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
 import com.nhom_4.arkanoid.gfx.Animation;
 import com.nhom_4.arkanoid.gfx.Assets;
 
 public class Brick extends Entity {
+    private static final long serialVersionUID = 1L;
 
     private int health;
     private int type;
-    private Image brickImage;
-    protected Animation animation;
+    private transient Image brickImage;
+    protected transient Animation animation;
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        
+        this.brickImage = Assets.bricks.get(this.type);
+        this.animation = null;
+
+        if (this.type == 4) {
+            if (!Assets.goldBrick.isEmpty()) {
+                this.animation = new Animation(Assets.goldBrick, 0.1, 2);
+            }
+        } else if (this.type == 5) {
+            if (!Assets.silverBrick.isEmpty()) {
+                this.animation = new Animation(Assets.silverBrick, 0.1, 2);
+            }
+        }
+
+        updateTexture(); 
+    }
 
     public Brick(double x, double y, double w, double h, int health, Image image) {
         this.x = x;

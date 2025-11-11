@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class GamePanel extends JPanel implements Runnable {
     private static GamePanel instance;
-    private final Game game = new Game();
+    private Game game;
     private final KeyInput keys = new KeyInput();
     private final MouseInput mouse = new MouseInput();
     private Thread loop;
@@ -20,12 +20,22 @@ public class GamePanel extends JPanel implements Runnable {
         setBackground(Constants.BG_COLOR);
         setFocusable(true);
         addKeyListener(keys);
-        game.bindInput(keys);
 
-        game.bindInput(mouse);
         addMouseListener(mouse);
         addMouseMotionListener(mouse); // nếu muốn hover sau này
+        initgame();
         start();
+    }
+
+    private void initgame() {
+        this.game = Game.createOrLoadGame(keys, mouse);
+
+        game.bindInput(mouse);
+        game.bindInput(keys);
+    }
+
+    public Game getGame() {
+        return game;
     }
 
     public static GamePanel getInstance() {
