@@ -72,6 +72,11 @@ public class Game {
         if (level2 != null) {
             levelMaps.add(level2);
         }
+
+        Pair<Integer, Integer>[][] level3 = LevelLoader.loadMap("mapLevel3.csv");
+        if (level3 != null) {
+            levelMaps.add(level3);
+        }
     }
 
     private List<Brick> spawnBricksForCurrentLevel() {
@@ -161,7 +166,7 @@ public class Game {
     }
 
     public void update(double dt) {
-        //Phát nhạc
+        // Phát nhạc
         if (state != previousState) {
             switch (state) {
                 case MENU:
@@ -254,7 +259,8 @@ public class Game {
         while (it.hasNext()) {
             ExplosionEffect e = it.next();
             e.update(dt);
-            if (e.isFinished()) it.remove();
+            if (e.isFinished())
+                it.remove();
         }
 
         Collision.reflectBallOnWallsList(balls);
@@ -296,7 +302,8 @@ public class Game {
             powerUpManager.reset();
             bullets.clear();
             if (hud.getLives() > 0) {
-                Ball newBall = new Ball(paddle.centerX(), paddle.getY() - Constants.BALL_RADIUS - 2, Constants.BALL_RADIUS);
+                Ball newBall = new Ball(paddle.centerX(), paddle.getY() - Constants.BALL_RADIUS - 2,
+                        Constants.BALL_RADIUS);
                 newBall.stickToPaddle(true);
                 newBall.setVx(0);
                 newBall.setVy(0);
@@ -368,7 +375,8 @@ public class Game {
         for (Ball b : balls) {
             Rectangle2D.Double ballRect = b.getRect();
             for (Brick br : bricks) {
-                if (!br.isAlive()) continue;
+                if (!br.isAlive())
+                    continue;
                 if (ballRect.intersects(br.getRect())) {
 
                     if (br.isUnBreakable()) {

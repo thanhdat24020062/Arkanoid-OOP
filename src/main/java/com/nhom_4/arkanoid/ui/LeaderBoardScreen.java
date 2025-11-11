@@ -3,7 +3,6 @@ package com.nhom_4.arkanoid.ui;
 import com.nhom_4.arkanoid.gfx.Assets;
 import com.nhom_4.arkanoid.input.MouseInput;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -31,8 +30,7 @@ public class LeaderBoardScreen {
             g.drawImage(Assets.LEADERBOARD, 0, 0, WIDTH, HEIGHT, null);
 
         // Tiêu đề
-        g.setFont(Assets.fontPixels_44 != null ? Assets.fontPixels_44 :
-                new Font(Font.SANS_SERIF, Font.BOLD, 44));
+        g.setFont(Assets.fontPixels_44 != null ? Assets.fontPixels_44 : new Font(Font.SANS_SERIF, Font.BOLD, 44));
         g.setColor(Color.WHITE);
         g.drawString("LEADERBOARD", WIDTH / 2 - 180, 80);
 

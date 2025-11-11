@@ -39,7 +39,8 @@ public class Leaderboard {
     private void load() {
         scores.clear();
         File f = new File(FILE_NAME);
-        if (!f.exists()) return;
+        if (!f.exists())
+            return;
         try (BufferedReader br = new BufferedReader(new FileReader(f))) {
             String line;
             while ((line = br.readLine()) != null) {

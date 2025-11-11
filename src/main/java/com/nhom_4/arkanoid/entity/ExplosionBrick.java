@@ -9,17 +9,15 @@ import java.util.ArrayList;
 
 public class ExplosionBrick extends Brick {
     private final List<Brick> bricks;
-    private final PowerUpManager powerUpManager;
 
     public ExplosionBrick(double x, double y, double w, double h, int health,
-                          Image image, int type, List<Brick> bricks, PowerUpManager powerUpManager) {
+            Image image, int type, List<Brick> bricks, PowerUpManager powerUpManager) {
         super(x, y, w, h, health, image, type);
         if (!Assets.explosionBrick.isEmpty()) {
             animation = new Animation(Assets.explosionBrick, 0.1, 0);
         }
 
         this.bricks = bricks;
-        this.powerUpManager = powerUpManager;
     }
 
     public List<Brick> explode() {
@@ -32,7 +30,8 @@ public class ExplosionBrick extends Brick {
         List<Brick> affected = new ArrayList<>();
 
         for (Brick b : bricks) {
-            if (b == this || !b.isAlive() || b.isUnBreakable()) continue;
+            if (b == this || !b.isAlive() || b.isUnBreakable())
+                continue;
 
             double dx = Math.abs(b.centerX() - cx);
             double dy = Math.abs(b.centerY() - cy);
@@ -44,4 +43,3 @@ public class ExplosionBrick extends Brick {
         return affected;
     }
 }
-
