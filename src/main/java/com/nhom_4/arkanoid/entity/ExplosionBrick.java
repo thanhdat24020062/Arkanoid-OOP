@@ -3,9 +3,9 @@ package com.nhom_4.arkanoid.entity;
 import com.nhom_4.arkanoid.gfx.Animation;
 import com.nhom_4.arkanoid.gfx.Assets;
 
-import java.awt.Image;
-import java.util.List;
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ExplosionBrick extends Brick {
     private final List<Brick> bricks;

@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Leaderboard {
+public class LeaderBoard {
     private static final String FILE_NAME = "leaderboard.txt";
     private final List<PlayerScore> scores = new ArrayList<>();
 
-    public Leaderboard() {
+    public LeaderBoard() {
         load();
     }
 

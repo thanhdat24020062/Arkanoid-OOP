@@ -23,10 +23,11 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Game {
+    private static Game instance;
     private final HUD hud = new HUD();
     private final Screens screens = new Screens();
     private final Menu menu = new Menu();
-    private final Leaderboard leaderboard = new Leaderboard();
+    private final LeaderBoard leaderboard = new LeaderBoard();
     private final PowerUpManager powerUpManager = new PowerUpManager();
     private final List<Bullet> bullets = new ArrayList<>();
     private final List<ExplosionEffect> explosions = new ArrayList<>();
@@ -43,9 +44,16 @@ public class Game {
     private MouseInput mouse;
     private boolean showPressSpace = true;
 
-    public Game() {
+    private Game() {
         loadAllLevelMaps();
         startNewGame();
+    }
+
+    public static Game getInstance() {
+        if (instance == null) {
+            instance = new Game();
+        }
+        return instance;
     }
 
     public void setFps(int fps) {

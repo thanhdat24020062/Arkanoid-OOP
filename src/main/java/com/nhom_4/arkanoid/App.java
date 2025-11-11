@@ -10,9 +10,13 @@ import com.nhom_4.arkanoid.gfx.Assets;
 
 public class App {
     public static void main(String[] args) {
-        Sound.init();
         Music.init();
         Assets.load();
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            Sound.shutdown();
+            Music.shutdown();
+        }));
 
         SwingUtilities.invokeLater(() -> {
             Assets.load();

@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class GamePanel extends JPanel implements Runnable {
     private static GamePanel instance;
-    private final Game game = new Game();
+    private final Game game = Game.getInstance();
     private final KeyInput keys = new KeyInput();
     private final MouseInput mouse = new MouseInput();
     private Thread loop;
@@ -67,8 +67,8 @@ public class GamePanel extends JPanel implements Runnable {
             Toolkit.getDefaultToolkit().sync();
             try {
                 Thread.sleep(2);
-            } catch (InterruptedException ignored) {
-                ignored.printStackTrace();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
         }
     }
