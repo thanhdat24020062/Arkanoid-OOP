@@ -14,46 +14,81 @@ import com.nhom_4.arkanoid.ui.*;
 import com.nhom_4.arkanoid.ui.Menu;
 import com.nhom_4.arkanoid.util.LevelLoader;
 import com.nhom_4.arkanoid.util.Pair;
+import com.nhom_4.arkanoid.util.SaveLoadManager;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Game {
-    private static Game instance;
-    private final HUD hud = new HUD();
-    private final Screens screens = new Screens();
-    private final Menu menu = new Menu();
-    private final LeaderBoard leaderboard = new LeaderBoard();
-    private final PowerUpManager powerUpManager = new PowerUpManager();
-    private final List<Bullet> bullets = new ArrayList<>();
-    private final List<ExplosionEffect> explosions = new ArrayList<>();
-    private final LeaderBoardScreen leaderBoardScreen = new LeaderBoardScreen();
-    private GameState state = GameState.MENU;
+public class Game implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private transient HUD hud;
+    private transient Screens screens;
+    private transient Menu menu;
+    private LeaderBoard leaderboard;
+    private final PowerUpManager powerUpManager;
+    private final List<Bullet> bullets;
+    private List<ExplosionEffect> explosions;
+    private LeaderBoardScreen leaderBoardScreen;
+    private GameState state;
     private GameState previousState = null;
-    private List<Pair<Integer, Integer>[][]> levelMaps;
+    private transient List<Pair<Integer, Integer>[][]> levelMaps;
     private int currentLevelIndex;
 
     private Paddle paddle;
     private List<Ball> balls;
     private List<Brick> bricks;
-    private KeyInput keys;
-    private MouseInput mouse;
-    private boolean showPressSpace = true;
+    private transient KeyInput keys;
+    private transient MouseInput mouse;
+    private boolean showPressSpace;
 
-    private Game() {
-        loadAllLevelMaps();
-        startNewGame();
+    public static Game createOrLoadGame(KeyInput k, MouseInput m) {
+        Game game = SaveLoadManager.loadGame();
+
+        if (game == null) {
+            game = new Game();
+            game.loadAllLevelMaps();
+            game.startNewGame();
+            game.state = GameState.MENU;
+        } else {
+            if (game.state == GameState.PLAYING) {
+                game.state = GameState.PAUSED;
+            }
+        }
+        game.initTransientFields(k, m);
+
+        return game;
     }
 
-    public static Game getInstance() {
-        if (instance == null) {
-            instance = new Game();
-        }
-        return instance;
+    public Game() {
+        this.powerUpManager = new PowerUpManager();
+        this.bullets = new ArrayList<>();
+        this.balls = new ArrayList<>();
+        this.explosions = new ArrayList<>();
+        this.leaderboard = new LeaderBoard();
+
+        this.hud = new HUD(); 
+        this.screens = new Screens();
+        this.menu = new Menu();
+        this.leaderBoardScreen = new LeaderBoardScreen();
+
+        this.state = GameState.MENU;
+        this.showPressSpace = true;
+    }
+
+    private void initTransientFields(KeyInput k, MouseInput m) {
+        this.hud = new HUD(); 
+        this.screens = new Screens();
+        this.menu = new Menu();
+        this.leaderBoardScreen = new LeaderBoardScreen();
+        this.keys = k;
+        this.mouse = m;
+        loadAllLevelMaps();
     }
 
     public void setFps(int fps) {
@@ -85,6 +120,7 @@ public class Game {
         if (level3 != null) {
             levelMaps.add(level3);
         }
+
     }
 
     private List<Brick> spawnBricksForCurrentLevel() {
@@ -174,7 +210,7 @@ public class Game {
     }
 
     public void update(double dt) {
-        // Phát nhạc
+        //Phát nhạc
         if (state != previousState) {
             switch (state) {
                 case MENU:
@@ -189,6 +225,11 @@ public class Game {
                     Sound.playGameOverSound();
                     Music.stopMenuMusic();
                     Music.stopPlayingMusic();
+                    break;
+                case PAUSED:
+                    SaveLoadManager.saveGame(this);
+                    if (keys.consumeSpace())
+                        state = GameState.PLAYING;
                     break;
                 default:
                     Music.stopMenuMusic();
@@ -267,8 +308,7 @@ public class Game {
         while (it.hasNext()) {
             ExplosionEffect e = it.next();
             e.update(dt);
-            if (e.isFinished())
-                it.remove();
+            if (e.isFinished()) it.remove();
         }
 
         Collision.reflectBallOnWallsList(balls);
@@ -310,8 +350,7 @@ public class Game {
             powerUpManager.reset();
             bullets.clear();
             if (hud.getLives() > 0) {
-                Ball newBall = new Ball(paddle.centerX(), paddle.getY() - Constants.BALL_RADIUS - 2,
-                        Constants.BALL_RADIUS);
+                Ball newBall = new Ball(paddle.centerX(), paddle.getY() - Constants.BALL_RADIUS - 2, Constants.BALL_RADIUS);
                 newBall.stickToPaddle(true);
                 newBall.setVx(0);
                 newBall.setVy(0);
@@ -387,8 +426,7 @@ public class Game {
         for (Ball b : balls) {
             Rectangle2D.Double ballRect = b.getRect();
             for (Brick br : bricks) {
-                if (!br.isAlive())
-                    continue;
+                if (!br.isAlive()) continue;
                 if (ballRect.intersects(br.getRect())) {
 
                     if (br.isUnBreakable()) {
