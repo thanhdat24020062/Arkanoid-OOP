@@ -6,24 +6,26 @@ import com.nhom_4.arkanoid.audio.Sound;
 import com.nhom_4.arkanoid.config.Constants;
 import com.nhom_4.arkanoid.entity.Ball;
 
+import static com.nhom_4.arkanoid.config.Constants.*;
+
 public final class Collision {
     private Collision() {
     }
 
     public static void reflectBallOnWalls(Ball ball) {
         // trái/phải
-        if (ball.getX() - ball.getR() < 0) {
-            ball.setX(ball.getR());
+        if (ball.getX() - ball.getR() < WALL_THICK) {
+            ball.setX(ball.getR() + WALL_THICK);
             ball.setVx(Math.abs(ball.getVx()));
             Sound.playBoundSound();
-        } else if (ball.getX() + ball.getR() > Constants.WIDTH) {
-            ball.setX(Constants.WIDTH - ball.getR());
+        } else if (ball.getX() + ball.getR() > Constants.WIDTH - WALL_THICK) {
+            ball.setX(Constants.WIDTH - WALL_THICK - ball.getR());
             ball.setVx(-Math.abs(ball.getVx()));
             Sound.playBoundSound();
         }
         // top
-        if (ball.getY() - ball.getR() < 0) {
-            ball.setY(ball.getR());
+        if (ball.getY() - ball.getR() < TOP_WALL) {
+            ball.setY(ball.getR() + TOP_WALL);
             ball.setVy(Math.abs(ball.getVy()));
             Sound.playBoundSound();
         }

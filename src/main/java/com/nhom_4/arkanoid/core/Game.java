@@ -1,45 +1,39 @@
 package com.nhom_4.arkanoid.core;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import java.awt.Image;
-
 import com.nhom_4.arkanoid.audio.Music;
 import com.nhom_4.arkanoid.audio.Sound;
-import com.nhom_4.arkanoid.ui.Menu;
-
 import com.nhom_4.arkanoid.config.Constants;
-import com.nhom_4.arkanoid.entity.Ball;
-import com.nhom_4.arkanoid.entity.Brick;
-import com.nhom_4.arkanoid.entity.Bullet;
-import com.nhom_4.arkanoid.entity.Paddle;
-import com.nhom_4.arkanoid.entity.PowerUpManager;
+import com.nhom_4.arkanoid.entity.*;
 import com.nhom_4.arkanoid.gfx.Assets;
 import com.nhom_4.arkanoid.gfx.Renderer;
 import com.nhom_4.arkanoid.input.KeyInput;
 import com.nhom_4.arkanoid.input.MouseInput;
 import com.nhom_4.arkanoid.physics.Collision;
 import com.nhom_4.arkanoid.physics.Resolver;
-import com.nhom_4.arkanoid.ui.HUD;
-import com.nhom_4.arkanoid.ui.Screens;
-import com.nhom_4.arkanoid.util.Pair;
+import com.nhom_4.arkanoid.ui.*;
+import com.nhom_4.arkanoid.ui.Menu;
 import com.nhom_4.arkanoid.util.LevelLoader;
+import com.nhom_4.arkanoid.util.Pair;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class Game {
-    private GameState state = GameState.MENU;
-    private GameState previousState = null;
     private final HUD hud = new HUD();
     private final Screens screens = new Screens();
     private final Menu menu = new Menu();
+    private final Leaderboard leaderboard = new Leaderboard();
     private final PowerUpManager powerUpManager = new PowerUpManager();
     private final List<Bullet> bullets = new ArrayList<>();
+    private final List<ExplosionEffect> explosions = new ArrayList<>();
+    private final LeaderBoardScreen leaderBoardScreen = new LeaderBoardScreen();
+    private GameState state = GameState.MENU;
+    private GameState previousState = null;
     private List<Pair<Integer, Integer>[][]> levelMaps;
-
     private int currentLevelIndex;
 
     private Paddle paddle;
@@ -48,6 +42,11 @@ public class Game {
     private KeyInput keys;
     private MouseInput mouse;
     private boolean showPressSpace = true;
+
+    public Game() {
+        loadAllLevelMaps();
+        startNewGame();
+    }
 
     public void setFps(int fps) {
         hud.setFps(fps);
@@ -61,11 +60,6 @@ public class Game {
         this.mouse = m;
     }
 
-    public Game() {
-        loadAllLevelMaps();
-        startNewGame();
-    }
-
     private void loadAllLevelMaps() {
         levelMaps = new ArrayList<>();
 
@@ -73,7 +67,7 @@ public class Game {
         if (level1 != null) {
             levelMaps.add(level1);
         }
-    
+
         Pair<Integer, Integer>[][] level2 = LevelLoader.loadMap("mapLevel2.csv");
         if (level2 != null) {
             levelMaps.add(level2);
@@ -112,7 +106,13 @@ public class Game {
                 double brickX = Constants.WALL_THICK + j * brickWidth;
                 double brickY = Constants.TOP_OFFSET + i * brickHeight;
 
-                newBricks.add(new Brick(brickX, brickY, brickWidth, brickHeight, health, brickImage, brickType));
+                // Type 6 = Explosion Brick
+                if (brickType == 6) {
+                    newBricks.add(new ExplosionBrick(brickX, brickY, brickWidth,
+                            brickHeight, health, brickImage, brickType, newBricks, powerUpManager));
+                } else {
+                    newBricks.add(new Brick(brickX, brickY, brickWidth, brickHeight, health, brickImage, brickType));
+                }
             }
         }
         return newBricks;
@@ -140,7 +140,7 @@ public class Game {
         double pw = Constants.PADDLE_WIDTH;
         paddle = new Paddle(Constants.WIDTH / 2.0 - pw / 2.0, Constants.HEIGHT - 50, pw, Constants.PADDLE_HEIGHT,
                 Constants.PADDLE_SPEED);
-                
+
         balls = new ArrayList<>();
         Ball initialBall = new Ball(paddle.centerX(), paddle.getY() - Constants.BALL_RADIUS - 2, Constants.BALL_RADIUS);
         balls.add(initialBall);
@@ -191,6 +191,8 @@ public class Game {
                 if (act == Menu.Action.START) {
                     showPressSpace = true;
                     state = GameState.PLAYING;
+                } else if (act == Menu.Action.LEADERBOARD) {
+                    state = GameState.LEADERBOARD;
                 } else if (act == Menu.Action.EXIT)
                     System.exit(0);
                 break;
@@ -198,7 +200,16 @@ public class Game {
                 if (keys.consumeSpace())
                     state = GameState.PLAYING;
                 break;
+            case LEADERBOARD:
+                leaderBoardScreen.update(mouse);
+                if (leaderBoardScreen.isBackPressed()) {
+                    state = GameState.MENU;
+                }
+                break;
             case GAME_OVER:
+                if (keys.isPressedR())
+                    startNewGame();
+                break;
             case YOU_WIN:
                 if (keys.isPressedR())
                     startNewGame();
@@ -212,7 +223,7 @@ public class Game {
     private void updatePlayingState(double dt) {
         double dir = (keys.isLeft() ? -1 : 0) + (keys.isRight() ? 1 : 0);
         paddle.update(dt, dir);
-        
+
         for (Ball b : balls) {
             if (b.isSticking()) {
                 b.setX(paddle.centerX());
@@ -238,6 +249,13 @@ public class Game {
 
         powerUpManager.update(dt, paddle, hud, balls);
         handleBullets(dt);
+
+        Iterator<ExplosionEffect> it = explosions.iterator();
+        while (it.hasNext()) {
+            ExplosionEffect e = it.next();
+            e.update(dt);
+            if (e.isFinished()) it.remove();
+        }
 
         Collision.reflectBallOnWallsList(balls);
         handleBricks();
@@ -276,16 +294,22 @@ public class Game {
         if (balls.isEmpty()) {
             hud.loseLife();
             powerUpManager.reset();
+            bullets.clear();
             if (hud.getLives() > 0) {
                 Ball newBall = new Ball(paddle.centerX(), paddle.getY() - Constants.BALL_RADIUS - 2, Constants.BALL_RADIUS);
                 newBall.stickToPaddle(true);
                 newBall.setVx(0);
                 newBall.setVy(0);
                 balls.add(newBall);
-                paddle.deactivateLasers(); 
+                paddle.deactivateLasers();
                 showPressSpace = true;
             } else {
                 state = GameState.GAME_OVER;
+
+                String name = JOptionPane.showInputDialog("Nhập tên của bạn:");
+                if (name != null && !name.trim().isEmpty()) {
+                    leaderboard.addScore(name.trim(), hud.getScore());
+                }
             }
         }
 
@@ -299,6 +323,29 @@ public class Game {
         }
     }
 
+    private void brickGetHit(Brick brick) {
+        boolean destroyed = brick.hit();
+
+        hud.addScore(destroyed ? 50 : 10);
+
+        if (destroyed) {
+            powerUpManager.spawnPowerUp(brick.centerX(), brick.centerY());
+
+            if (brick instanceof ExplosionBrick) {
+                explosions.add(new ExplosionEffect(
+                        brick.centerX() - 1.5 * brick.getW(),
+                        brick.centerY() - 1.5 * brick.getH(),
+                        brick.getW(),
+                        brick.getH()));
+                Sound.playExplosionSound();
+                List<Brick> affected = ((ExplosionBrick) brick).explode();
+                for (Brick br : affected) {
+                    brickGetHit(br);
+                }
+            }
+        }
+    }
+
     private void handleBullets(double dt) {
         Iterator<Bullet> bulletIterator = bullets.iterator();
         while (bulletIterator.hasNext()) {
@@ -307,13 +354,8 @@ public class Game {
             boolean hit = false;
             for (Brick brick : bricks) {
                 if (brick.isAlive() && bullet.getRect().intersects(brick.getRect())) {
-                    boolean destroyed = brick.hit();
-                    hud.addScore(destroyed ? 50 : 10);
                     hit = true;
-
-                    if (destroyed) {
-                        powerUpManager.spawnPowerUp(brick.centerX(), brick.centerY());
-                    }
+                    brickGetHit(brick);
                     break;
                 }
             }
@@ -327,25 +369,18 @@ public class Game {
             Rectangle2D.Double ballRect = b.getRect();
             for (Brick br : bricks) {
                 if (!br.isAlive()) continue;
-
                 if (ballRect.intersects(br.getRect())) {
 
                     if (br.isUnBreakable()) {
                         Resolver.resolveBallBrick(b, br);
                         Sound.playMetalSound();
-                    } if (b.isFireball()) {
+                    } else if (b.isFireball()) {
                         Sound.playBreakSound();
                     } else {
                         Resolver.resolveBallBrick(b, br);
                         Sound.playBoundSound();
                     }
-                    boolean destroyed = br.hit();
-                    if (destroyed) {
-                        hud.addScore(50);
-                        powerUpManager.spawnPowerUp(br.centerX(), br.centerY());
-                    } else {
-                        hud.addScore(10);
-                    }
+                    brickGetHit(br);
                     b.speedUp(Constants.BALL_SPEEDUP_MUL, Constants.BALL_SPEED_CAP);
                     break;
                 }
@@ -380,6 +415,10 @@ public class Game {
         powerUpManager.render(g);
         hud.render(g);
 
+        for (ExplosionEffect e : explosions) {
+            e.render(g);
+        }
+
         renderOverlay(g);
     }
 
@@ -390,11 +429,14 @@ public class Game {
                 break;
             case PLAYING:
                 if (showPressSpace) {
-                    Renderer.renderText(g, "Press Space to Start", Assets.fontPixels_40, Constants.WIDTH / 2 - 250,
-                            Constants.HEIGHT / 2, Color.WHITE);
+                    Renderer.renderText(g, "Press Space to Start", Assets.fontPixels_40,
+                            (float) Constants.WIDTH / 2 - 250, (float) Constants.HEIGHT / 2, Color.WHITE);
                 }
                 break;
             case PAUSED:
+                break;
+            case LEADERBOARD:
+                leaderBoardScreen.render(g);
                 break;
             case GAME_OVER:
                 screens.drawCenterText(g, "GAME OVER", "Press R to restart");

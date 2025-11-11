@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Assets {
+    public static BufferedImage LEADERBOARD;
     public static BufferedImage BUTTON_SMALL = null;
     public static BufferedImage EXIT_DIALOG;
     public static BufferedImage MENU_BG;
@@ -31,9 +32,12 @@ public class Assets {
 
     public static List<Image> silverBrick = new ArrayList<>();
     public static List<Image> goldBrick = new ArrayList<>();
+    public static List<Image> explosionBrick = new ArrayList<>();
+    public static List<Image> explosionEffect = new ArrayList<>();
 
     public static void load() {
         MENU_BG = Files.loadImageCP("/images/menu_bg.png", Constants.WIDTH, Constants.HEIGHT);
+        LEADERBOARD = Files.loadImageCP("/images/leaderboard.png", Constants.WIDTH, Constants.HEIGHT);
         BUTTON_START = Files.loadImageCP("/images/button_menu.png", 240, 120);
         BUTTON_HOW_TO_PLAY = Files.loadImageCP("/images/button_menu.png", 460, 120);
         BUTTON_EXIT = Files.loadImageCP("/images/button_menu.png", 200, 120);
@@ -47,6 +51,7 @@ public class Assets {
         ball = Files.loadImage("/images/ball.png");
 
         bricks = new HashMap<>();
+        bricks.put(0, Files.loadImage("/images/brick_steel.png"));
         bricks.put(1, Files.loadImage("/images/brick_blue.png"));
         bricks.put(2, Files.loadImage("/images/brick_cyan.png"));
         bricks.put(3, Files.loadImage("/images/brick_orange.png"));
@@ -65,8 +70,17 @@ public class Assets {
             bricks.put(5, Files.loadImage("/images/brick_silver.png"));
         }
 
-        bricks.put(6, Files.loadImage("/images/brick_silver_broken.png"));
-        bricks.put(7, Files.loadImage("/images/brick_steel.png"));
+        explosionBrick = loadAnimationFrames("/images/brick_bomb", 8);
+        if (!explosionBrick.isEmpty()) {
+            bricks.put(6, explosionBrick.getFirst());
+        } else {
+            bricks.put(6, Files.loadImage("/images/brick_bomb.png"));
+        }
+
+        bricks.put(40, Files.loadImage("/images/brick_gold_broken.png"));
+        bricks.put(50, Files.loadImage("/images/brick_silver_broken.png"));
+
+        explosionEffect = loadAnimationFrames("/images/explosion_effect", 8);
     }
 
     private static List<Image> loadAnimationFrames(String folderPath, int frameNumber) {

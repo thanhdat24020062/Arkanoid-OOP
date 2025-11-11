@@ -1,41 +1,54 @@
 package com.nhom_4.arkanoid.ui;
 
+import com.nhom_4.arkanoid.audio.Sound;
+import com.nhom_4.arkanoid.config.Constants;
+import com.nhom_4.arkanoid.gfx.Assets;
+import com.nhom_4.arkanoid.gfx.Renderer;
+import com.nhom_4.arkanoid.input.MouseInput;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-import com.nhom_4.arkanoid.config.Constants;
-import com.nhom_4.arkanoid.gfx.Renderer;
-import com.nhom_4.arkanoid.input.MouseInput;
-import com.nhom_4.arkanoid.audio.Sound;
-import com.nhom_4.arkanoid.gfx.Assets;
-
 public class Menu {
-    public enum Action {
-        NONE, START, HELP_TOGGLE, EXIT
-    }
-
-    private final String[] items = { "START", "HOW TO PLAY", "EXIT" };
-
-    private boolean showHelp = false;
-
-    // ====== Exit? overlay ======
-    private boolean exitConfirm = false;
+    private static int lastHoverIndex = -1;
+    private static int lastExitHoverIndex = -1;
+    private final String[] items = {"START", "HOW TO PLAY", "LEADERBOARD", "EXIT"};
     private final Rectangle yesBtn = new Rectangle();
     private final Rectangle noBtn = new Rectangle();
     private final Rectangle exitPanel = new Rectangle(); // bounds của khung Exit?
-
     // bounds cho 3 nút để bắt click
-    private final Rectangle[] btn = { new Rectangle(), new Rectangle(), new Rectangle() };
-
+    private final Rectangle[] btn = {new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle()};
     private final Font titleFont = new Font(Font.SANS_SERIF, Font.BOLD, 42);
-
     private final Font helpFont = new Font(Font.MONOSPACED, Font.PLAIN, 14);
+    private boolean showHelp = false;
+    // ====== Exit? overlay ======
+    private boolean exitConfirm = false;
+
+    private static void playHoverIfChanged(int current) {
+        if (current != lastHoverIndex) {
+            if (current != -1) {
+                Sound.playMenuHoverSound();
+            }
+            lastHoverIndex = current;
+        }
+    }
+
+    private static void playExitHoverIfChanged(int current) {
+        if (current != lastExitHoverIndex) {
+            if (current != -1) {
+                Sound.playMenuHoverSound();
+            }
+            lastExitHoverIndex = current;
+        }
+    }
 
     public boolean isHelpVisible() {
         return showHelp;
     }
 
-    /** Xử lý click chuột */
+    /**
+     * Xử lý click chuột
+     */
     public Action update(MouseInput m) {
         Point p = m.consumeClick();
         if (p == null)
@@ -61,17 +74,18 @@ public class Menu {
         // Bình thường: click các nút menu
         for (int i = 0; i < items.length; i++) {
             if (btn[i].contains(p)) {
-                // Sound.blip();
-                if (i == 0)
-                    return Action.START;
-                if (i == 1) {
-                    showHelp = !showHelp;
-                    return Action.HELP_TOGGLE;
+                switch (i) {
+                    case 0:
+                        return Action.START;
+                    case 1:
+                        showHelp = !showHelp;
+                        return Action.HELP_TOGGLE;
+                    case 2:
+                        return Action.LEADERBOARD; // new
+                    case 3:
+                        exitConfirm = true;
+                        return Action.NONE; // mở overlay
                 }
-                if (i == 2) {
-                    exitConfirm = true;
-                    return Action.NONE;
-                } // mở overlay
             }
         }
         return Action.NONE;
@@ -99,7 +113,9 @@ public class Menu {
         g.fillRect(0, 0, Constants.WIDTH, Constants.HEIGHT);
     }
 
-    /** Vẽ nền + các nút + (tuỳ chọn) Help + Exit? */
+    /**
+     * Vẽ nền + các nút + (tuỳ chọn) Help + Exit?
+     */
     public void render(Graphics2D g, MouseInput mouseInput) {
         this.drawMenuBackground(g);
 
@@ -113,6 +129,8 @@ public class Menu {
             if (i == 0)
                 target = Assets.BUTTON_START;
             else if (i == 1)
+                target = Assets.BUTTON_HOW_TO_PLAY;
+            else if (i == 2)
                 target = Assets.BUTTON_HOW_TO_PLAY;
             else
                 target = Assets.BUTTON_EXIT;
@@ -146,29 +164,9 @@ public class Menu {
             drawExitConfirm(g, mouseInput); // luôn vẽ sau cùng (đè lên)
     }
 
-    private static int lastHoverIndex = -1;
-
-    private static void playHoverIfChanged(int current) {
-        if (current != lastHoverIndex) {
-            if (current != -1) {
-                Sound.playMenuHoverSound();
-            }
-            lastHoverIndex = current;
-        }
-    }
-
-    private static int lastExitHoverIndex = -1;
-
-    private static void playExitHoverIfChanged(int current) {
-        if (current != lastExitHoverIndex) {
-            if (current != -1) {
-                Sound.playMenuHoverSound();
-            }
-            lastExitHoverIndex = current;
-        }
-    }
-
-    /** Khung hướng dẫn cũ */
+    /**
+     * Khung hướng dẫn cũ
+     */
     private void drawHelp(Graphics2D g) {
         int w = 520, h = 200;
         int x = (Constants.WIDTH - w) / 2;
@@ -257,6 +255,10 @@ public class Menu {
         union.add(rYes);
         union.add(rNo);
         exitPanel.setBounds(union);
+    }
+
+    public enum Action {
+        NONE, START, HELP_TOGGLE, LEADERBOARD, EXIT
     }
 
 }
