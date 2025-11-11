@@ -1,117 +1,92 @@
 package com.nhom_4.arkanoid.audio;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public final class Sound extends Audio {
-    private static final Clip[] boundClips = new Clip[5];
-    private static final Clip[] breakClips = new Clip[3];
-    private static final Clip[] shootClips = new Clip[3];
-    private static final Clip[] metalClips = new Clip[3];
-    private static final Clip[] menuHoverClips = new Clip[5];
-    private static final Clip[] explosionClips = new Clip[3];
-    private static Clip gainLifeClip;
-    private static Clip gainShootClip;
-    private static Clip gainPowerClip;
-    private static Clip popClip;
-    private static Clip gameOverClip;
+public final class Sound  {
+    private static final ExecutorService audioPool = Executors.newFixedThreadPool(5);
+
+    private static final String BASE_PATH = "/sounds/";
+
+    private static final String BOUND = BASE_PATH + "BoundSound.wav";
+    private static final String BREAK = BASE_PATH + "BreakSound.wav";
+    private static final String SHOOT = BASE_PATH + "ShootSound.wav";
+    private static final String METAL = BASE_PATH + "MetalSound.wav";
+    private static final String MENU_HOVER = BASE_PATH + "BoundSound.wav";
+    private static final String EXPLOSION = BASE_PATH + "ExplosionSound.wav";
+    private static final String GAIN_LIFE = BASE_PATH + "GainLifeSound.wav";
+    private static final String GAIN_SHOOT = BASE_PATH + "GainShootSound.wav";
+    private static final String GAIN_POWER = BASE_PATH + "GainPowerSound.wav";
+    private static final String POP = BASE_PATH + "PopSound.wav";
+    private static final String GAME_OVER = BASE_PATH + "GameOverSound.wav";
 
     private Sound() {}
 
-    public static void init() {
-        for (int i = 0; i < boundClips.length; i++) {
-            boundClips[i] = loadClip("/sounds/BoundSound.wav");
-        }
-        for (int i = 0; i < breakClips.length; i++) {
-            breakClips[i] = loadClip("/sounds/BreakSound.wav");
-        }
-        for (int i = 0; i < shootClips.length; i++) {
-            shootClips[i] = loadClip("/sounds/ShootSound.wav");
-        }
-        for (int i = 0; i < metalClips.length; i++) {
-            metalClips[i] = loadClip("/sounds/MetalSound.wav");
-        }
-        for (int i = 0; i < menuHoverClips.length; i++) {
-            menuHoverClips[i] = loadClip("/sounds/BoundSound.wav");
-        }
-        for (int i = 0; i < explosionClips.length; i++) {
-            explosionClips[i] = loadClip("/sounds/ExplosionSound.wav");
-        }
-        gainLifeClip = loadClip("/sounds/GainLifeSound.wav");
-        gainShootClip = loadClip("/sounds/GainShootSound.wav");
-        gainPowerClip = loadClip("/sounds/GainPowerSound.wav");
-        popClip = loadClip("/sounds/PopSound.wav");
-        gameOverClip = loadClip("/sounds/GameOverSound.wav");
+    private static void play(String soundPath) {
+        audioPool.submit(() -> {
+            try (AudioInputStream ais = AudioSystem.getAudioInputStream(
+                    Objects.requireNonNull(Sound.class.getResource(soundPath)))) {
 
-        if (boundClips[0] != null) {
-            boundClips[0].start();
-            boundClips[0].setFramePosition(0);
-            boundClips[0].stop();
-        }
-    }
-
-    private static void play(Clip[] clips) {
-        if (clips == null) return;
-        for (Clip clip : clips) {
-            if (!clip.isRunning()) {
-                clip.setFramePosition(0);
+                Clip clip = AudioSystem.getClip();
+                clip.open(ais);
                 clip.start();
-                return;
-            }
-        }
-        //Nếu tất cả đang chạy, dùng clip đầu tiên và reset
-        clips[0].stop();
-        clips[0].setFramePosition(0);
-        clips[0].start();
-    }
 
-    private static void play(Clip clip) {
-        if (clip != null && !clip.isRunning()) {
-            clip.setFramePosition(0);
-            clip.start();
-        }
+            } catch (Exception e) {
+                System.err.println("Failed to play sound: " + soundPath);
+                e.printStackTrace();
+            }
+        });
     }
 
     public static void playBoundSound() {
-        play(boundClips);
+        play(BOUND);
     }
 
     public static void playBreakSound() {
-        play(breakClips);
+        play(BREAK);
     }
 
     public static void playShootSound() {
-        play(shootClips);
+        play(SHOOT);
     }
 
     public static void playMetalSound() {
-        play(metalClips);
+        play(METAL);
     }
 
     public static void playMenuHoverSound() {
-        play(menuHoverClips);
+        play(MENU_HOVER);
     }
 
     public static void playExplosionSound() {
-        play(explosionClips);
+        play(EXPLOSION);
     }
 
     public static void playGainLifeSound() {
-        play(gainLifeClip);
+        play(GAIN_LIFE);
     }
 
     public static void playGainShootSound() {
-        play(gainShootClip);
+        play(GAIN_SHOOT);
     }
 
     public static void playGainPowerSound() {
-        play(gainPowerClip);
+        play(GAIN_POWER);
     }
 
     public static void playPopSound() {
-        play(popClip);
+        play(POP);
     }
 
     public static void playGameOverSound() {
-        play(gameOverClip);
+        play(GAME_OVER);
+    }
+
+    public static void shutdown() {
+        audioPool.shutdown();
     }
 }

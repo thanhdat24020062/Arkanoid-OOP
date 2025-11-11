@@ -3,13 +3,12 @@ package com.nhom_4.arkanoid.entity;
 import com.nhom_4.arkanoid.gfx.Animation;
 import com.nhom_4.arkanoid.gfx.Assets;
 
-import java.awt.Image;
-import java.util.List;
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ExplosionBrick extends Brick {
     private final List<Brick> bricks;
-    private final PowerUpManager powerUpManager;
 
     public ExplosionBrick(double x, double y, double w, double h, int health,
                           Image image, int type, List<Brick> bricks, PowerUpManager powerUpManager) {
@@ -19,7 +18,6 @@ public class ExplosionBrick extends Brick {
         }
 
         this.bricks = bricks;
-        this.powerUpManager = powerUpManager;
     }
 
     public List<Brick> explode() {

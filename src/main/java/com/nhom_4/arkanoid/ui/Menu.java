@@ -16,7 +16,7 @@ public class Menu {
     private final Rectangle yesBtn = new Rectangle();
     private final Rectangle noBtn = new Rectangle();
     private final Rectangle exitPanel = new Rectangle(); // bounds của khung Exit?
-    // bounds cho 3 nút để bắt click
+    // bounds cho 4 nút để bắt click
     private final Rectangle[] btn = {new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle()};
     private final Font titleFont = new Font(Font.SANS_SERIF, Font.BOLD, 42);
     private final Font helpFont = new Font(Font.MONOSPACED, Font.PLAIN, 14);
