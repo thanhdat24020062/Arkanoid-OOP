@@ -19,7 +19,6 @@ public class App {
         }));
 
         SwingUtilities.invokeLater(() -> {
-            Assets.load();
             JFrame f = new JFrame("Arkanoid");
             f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             f.setResizable(false);

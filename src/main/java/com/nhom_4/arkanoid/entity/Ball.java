@@ -16,7 +16,7 @@ public class Ball extends Entity {
 
     // Thêm hiệu ứng vệt sáng
     private final List<Point> trail = new ArrayList<>();
-    private static final int TRAIL_LENGTH = 30;
+    private transient static final int TRAIL_LENGTH = 30;
 
     public Ball(double x, double y, double r) {
         this.x = x;

@@ -6,7 +6,7 @@ import com.nhom_4.arkanoid.gfx.Assets;
 import java.awt.*;
 
 public class ExplosionEffect extends Entity {
-    private Animation animation;
+    private transient Animation animation;
     private boolean finished = false;
 
     public ExplosionEffect(double x, double y, double w, double h) {

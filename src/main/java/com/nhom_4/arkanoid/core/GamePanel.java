@@ -9,13 +9,14 @@ import java.awt.*;
 
 public class GamePanel extends JPanel implements Runnable {
     private static GamePanel instance;
-    private final Game game = Game.getInstance();
+    private Game game;
     private final KeyInput keys = new KeyInput();
     private final MouseInput mouse = new MouseInput();
     private Thread loop;
     private boolean running = false;
 
     private GamePanel() {
+        this.game = Game.createOrLoadGame(keys, mouse);
         setPreferredSize(new Dimension(Constants.WIDTH, Constants.HEIGHT));
         setBackground(Constants.BG_COLOR);
         setFocusable(true);

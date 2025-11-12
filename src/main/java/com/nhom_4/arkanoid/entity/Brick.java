@@ -10,8 +10,8 @@ public class Brick extends Entity {
 
     private int health;
     private int type;
-    private Image brickImage;
-    protected Animation animation;
+    private transient Image brickImage;
+    protected transient Animation animation;
 
     public Brick(double x, double y, double w, double h, int health, Image image) {
         this.x = x;
@@ -98,5 +98,21 @@ public class Brick extends Entity {
             animation.update(dt);
             brickImage = animation.getCurrentFrame();
         }
+    }
+
+    public void restoreAfterLoad() {
+        if (type >= 0) {
+            brickImage = Assets.bricks.get(type);
+        }
+
+        // Phục hồi animation nếu là brick đặc biệt
+        if (type == 4 && !Assets.goldBrick.isEmpty()) {
+            animation = new Animation(Assets.goldBrick, 0.1, 2);
+        } else if (type == 5 && !Assets.silverBrick.isEmpty()) {
+            animation = new Animation(Assets.silverBrick, 0.1, 2);
+        } else if (type == 6 && !Assets.explosionBrick.isEmpty()) {
+            animation = new Animation(Assets.explosionBrick, 0.1, 0);
+        }
+        updateTexture();
     }
 }

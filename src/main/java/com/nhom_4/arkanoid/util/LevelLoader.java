@@ -45,7 +45,7 @@ public class LevelLoader {
     
     
     private static Pair<Integer, Integer> getBrickData(String key) {
-        if (key.isEmpty() || key.equals("0")) {
+        if (key.isEmpty() || key.equals("__")) {
             return null; 
         }
         
@@ -54,12 +54,9 @@ public class LevelLoader {
             case "A1": return new Pair<>(1, 1);
             case "A2": return new Pair<>(1, 2);
             case "A3": return new Pair<>(1, 3);
-            case "A4": return new Pair<>(2, 4);
             
             // Gạch 2 Máu (Health 2)
-            case "B1": return new Pair<>(2, 1);
-            case "B2": return new Pair<>(2, 2);
-            case "B3": return new Pair<>(2, 3);
+            case "B4": return new Pair<>(2, 4);
             case "B5": return new Pair<>(2, 5);
 
             // Unbreakable Brick

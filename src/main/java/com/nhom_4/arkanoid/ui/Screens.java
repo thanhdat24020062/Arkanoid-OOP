@@ -25,11 +25,19 @@ public class Screens {
         int titleWidth = fm.stringWidth(title);
         g.setColor(Color.WHITE);
         g.drawString(title, (Constants.WIDTH - titleWidth) / 2, Constants.HEIGHT / 2 - 20);
+
         g.setFont(new Font("Arial", Font.PLAIN, 24));
         fm = g.getFontMetrics();
-        int subtitleWidth = fm.stringWidth(subtitle);
         g.setColor(Color.LIGHT_GRAY);
-        g.drawString(subtitle, (Constants.WIDTH - subtitleWidth) / 2, Constants.HEIGHT / 2 + 20);
+
+        String[] lines = subtitle.split("\n");
+        int y = Constants.HEIGHT / 2 + 20;
+
+        for (String line : lines) {
+            int lineWidth = fm.stringWidth(line);
+            g.drawString(line, (Constants.WIDTH - lineWidth) / 2, y);
+            y += fm.getHeight();
+        }
     }
 
     public void drawDeathLine(Graphics2D g) {

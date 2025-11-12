@@ -2,8 +2,9 @@ package com.nhom_4.arkanoid.entity;
 
 import java.awt.*;
 import java.awt.geom.*;
+import java.io.Serializable;
 
-public abstract class Entity {
+public abstract class Entity implements Serializable {
     protected double x, y, w, h;
 
     public abstract void update(double dt);

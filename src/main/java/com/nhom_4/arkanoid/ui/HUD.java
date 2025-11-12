@@ -1,11 +1,12 @@
 package com.nhom_4.arkanoid.ui;
 
 import java.awt.*;
+import java.io.Serializable;
 
-public class HUD {
+public class HUD implements Serializable {
     private int score = 0;
     private int lives = 3;
-    private int fps = 0;
+    private transient int fps = 0;
 
     private final Font small = new Font(Font.SANS_SERIF, Font.BOLD, 16);
 
@@ -15,7 +16,11 @@ public class HUD {
     }
 
     public void addLife() {
-        this.lives++;
+        if (this.lives < 3) {
+            this.lives++;
+        } else {
+            addScore(100);
+        }
     }
 
     public void addScore(int s) {
@@ -42,7 +47,7 @@ public class HUD {
         g.setFont(small);
         g.setColor(Color.WHITE);
         g.drawString("Score: " + score, 16, 16);
-        g.drawString("Lives: " + lives, 140, 16);
+        g.drawString("Lives: " + lives + "/3", 140, 16);
         g.drawString("FPS: " + fps, 240, 16);
     }
 

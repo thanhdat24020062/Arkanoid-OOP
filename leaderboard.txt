@@ -1,3 +1,2 @@
-em:4630
-aaa:130
-hhh:30
+ArkanoidKing:99999
+GameMaker:8070

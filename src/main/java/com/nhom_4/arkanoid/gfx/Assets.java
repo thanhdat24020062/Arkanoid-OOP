@@ -25,7 +25,6 @@ public class Assets {
     public static BufferedImage BUTTON_EXIT;
     public static Font fontPixels_40;
     public static Font fontPixels_44;
-    public static Image background;
     public static Image paddle;
     public static Image ball;
     public static Map<Integer, Image> bricks;

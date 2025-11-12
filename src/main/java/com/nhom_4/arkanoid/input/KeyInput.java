@@ -6,6 +6,7 @@ public class KeyInput implements KeyListener {
     private volatile boolean left, right;
     private volatile boolean pressedP, pressedR;
     private volatile boolean spaceOnce;
+    private volatile boolean pressedEsc;
 
     public boolean isLeft() {
         return left;
@@ -21,6 +22,10 @@ public class KeyInput implements KeyListener {
 
     public boolean isPressedR() {
         return pressedR;
+    }
+
+    public boolean isPressedEsc() {
+        return pressedEsc;
     }
 
     public boolean consumeSpace() {
@@ -49,6 +54,9 @@ public class KeyInput implements KeyListener {
             case KeyEvent.VK_R:
                 pressedR = true;
                 break;
+            case KeyEvent.VK_ESCAPE:
+                pressedEsc = true;
+                break;
         }
     }
 
@@ -63,11 +71,17 @@ public class KeyInput implements KeyListener {
             case KeyEvent.VK_D:
                 right = false;
                 break;
+            case KeyEvent.VK_SPACE:
+                spaceOnce = false;
+                break;
             case KeyEvent.VK_P:
                 pressedP = false;
                 break;
             case KeyEvent.VK_R:
                 pressedR = false;
+                break;
+            case KeyEvent.VK_ESCAPE:
+                pressedEsc = false;
                 break;
         }
     }

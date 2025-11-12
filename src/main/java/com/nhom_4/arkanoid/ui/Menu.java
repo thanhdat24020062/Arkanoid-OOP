@@ -5,6 +5,7 @@ import com.nhom_4.arkanoid.config.Constants;
 import com.nhom_4.arkanoid.gfx.Assets;
 import com.nhom_4.arkanoid.gfx.Renderer;
 import com.nhom_4.arkanoid.input.MouseInput;
+import com.nhom_4.arkanoid.util.SaveLoadManager;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -12,12 +13,14 @@ import java.awt.image.BufferedImage;
 public class Menu {
     private static int lastHoverIndex = -1;
     private static int lastExitHoverIndex = -1;
-    private final String[] items = {"START", "HOW TO PLAY", "LEADERBOARD", "EXIT"};
+    private final String[] items = {"START", "CONTINUE", "HOW TO PLAY", "LEADERBOARD", "EXIT"};
     private final Rectangle yesBtn = new Rectangle();
     private final Rectangle noBtn = new Rectangle();
     private final Rectangle exitPanel = new Rectangle(); // bounds của khung Exit?
     // bounds cho 4 nút để bắt click
-    private final Rectangle[] btn = {new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle()};
+    private final Rectangle[] btn = {
+            new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle()
+    };
     private final Font titleFont = new Font(Font.SANS_SERIF, Font.BOLD, 42);
     private final Font helpFont = new Font(Font.MONOSPACED, Font.PLAIN, 14);
     private boolean showHelp = false;
@@ -78,11 +81,15 @@ public class Menu {
                     case 0:
                         return Action.START;
                     case 1:
+                        if (SaveLoadManager.hasSave())
+                            return Action.CONTINUE;
+                        break;
+                    case 2:
                         showHelp = !showHelp;
                         return Action.HELP_TOGGLE;
-                    case 2:
-                        return Action.LEADERBOARD; // new
                     case 3:
+                        return Action.LEADERBOARD; // new
+                    case 4:
                         exitConfirm = true;
                         return Action.NONE; // mở overlay
                 }
@@ -120,7 +127,7 @@ public class Menu {
         this.drawMenuBackground(g);
 
         int baseY = Constants.HEIGHT / 2 - 20;
-        int gap = 120;
+        int gap = 90;
         Point mousePos = mouseInput.getPosition();
 
         int hoveredIndex = -1;
@@ -131,6 +138,8 @@ public class Menu {
             else if (i == 1)
                 target = Assets.BUTTON_HOW_TO_PLAY;
             else if (i == 2)
+                target = Assets.BUTTON_HOW_TO_PLAY;
+            else if (i == 3)
                 target = Assets.BUTTON_HOW_TO_PLAY;
             else
                 target = Assets.BUTTON_EXIT;
@@ -258,7 +267,7 @@ public class Menu {
     }
 
     public enum Action {
-        NONE, START, HELP_TOGGLE, LEADERBOARD, EXIT
+        NONE, START, CONTINUE, HELP_TOGGLE, LEADERBOARD, EXIT
     }
 
 }

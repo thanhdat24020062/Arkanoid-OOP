@@ -2,25 +2,26 @@ package com.nhom_4.arkanoid.entity;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.io.Serializable;
 
-public class PowerUp {
+public class PowerUp implements Serializable {
     private double x, y;
-    private final double width = 20;
-    private final double height = 20;
-    private final double speed = 150; // Tốc độ rơi
+    private transient final double WIDTH = 20;
+    private transient final double HEIGTH = 20;
+    private transient final double SPEED = 150; // Tốc độ rơi
     private boolean active = true;
 
     private final PowerUpType type;
 
     public PowerUp(double x, double y, PowerUpType type) {
         // Khởi tạo ở giữa viên gạch
-        this.x = x - width / 2;
-        this.y = y - height / 2;
+        this.x = x - WIDTH / 2;
+        this.y = y - HEIGTH / 2;
         this.type = type;
     }
 
     public void update(double dt) {
-        y += speed * dt;
+        y += SPEED * dt;
         // Nếu ra khỏi màn hình thì vô hiệu hóa
         if (y > com.nhom_4.arkanoid.config.Constants.HEIGHT) {
             active = false;
@@ -29,7 +30,7 @@ public class PowerUp {
 
     public void render(Graphics2D g) {
         g.setColor(getColor());
-        g.fillRect((int) x, (int) y, (int) width, (int) height);
+        g.fillRect((int) x, (int) y, (int) WIDTH, (int) HEIGTH);
 
         // Vẽ chữ cái để phân biệt
         g.setColor(Color.WHITE);
@@ -56,7 +57,7 @@ public class PowerUp {
         }
         FontMetrics fm = g.getFontMetrics();
         int textWidth = fm.stringWidth(text);
-        g.drawString(text, (int) (x + (width - textWidth) / 2), (int) (y + 15));
+        g.drawString(text, (int) (x + (WIDTH - textWidth) / 2), (int) (y + 15));
     }
 
     private Color getColor() {
@@ -77,7 +78,7 @@ public class PowerUp {
     }
 
     public Rectangle2D.Double getRect() {
-        return new Rectangle2D.Double(x, y, width, height);
+        return new Rectangle2D.Double(x, y, WIDTH, HEIGTH);
     }
 
     public PowerUpType getType() {

@@ -14,46 +14,96 @@ import com.nhom_4.arkanoid.ui.*;
 import com.nhom_4.arkanoid.ui.Menu;
 import com.nhom_4.arkanoid.util.LevelLoader;
 import com.nhom_4.arkanoid.util.Pair;
+import com.nhom_4.arkanoid.util.SaveLoadManager;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Game {
-    private static Game instance;
-    private final HUD hud = new HUD();
-    private final Screens screens = new Screens();
-    private final Menu menu = new Menu();
-    private final LeaderBoard leaderboard = new LeaderBoard();
-    private final PowerUpManager powerUpManager = new PowerUpManager();
-    private final List<Bullet> bullets = new ArrayList<>();
-    private final List<ExplosionEffect> explosions = new ArrayList<>();
-    private final LeaderBoardScreen leaderBoardScreen = new LeaderBoardScreen();
-    private GameState state = GameState.MENU;
+public class Game implements Serializable {
+    private HUD hud;
+    private transient Screens screens;
+    private transient Menu menu;
+    private transient LeaderBoard leaderboard;
+    private PowerUpManager powerUpManager;
+    private final List<Bullet> bullets;
+    private List<ExplosionEffect> explosions;
+    private transient LeaderBoardScreen leaderBoardScreen;
+    private GameState state;
     private GameState previousState = null;
-    private List<Pair<Integer, Integer>[][]> levelMaps;
+    private transient List<Pair<Integer, Integer>[][]> levelMaps;
     private int currentLevelIndex;
 
     private Paddle paddle;
     private List<Ball> balls;
     private List<Brick> bricks;
-    private KeyInput keys;
-    private MouseInput mouse;
+    private transient KeyInput keys;
+    private transient MouseInput mouse;
     private boolean showPressSpace = true;
 
-    private Game() {
-        loadAllLevelMaps();
-        startNewGame();
+    public Game() {
+        this.powerUpManager = new PowerUpManager();
+        this.bullets = new ArrayList<>();
+        this.balls = new ArrayList<>();
+        this.explosions = new ArrayList<>();
+        this.leaderboard = new LeaderBoard();
+
+        this.hud = new HUD();
+        this.screens = new Screens();
+        this.menu = new Menu();
+        this.leaderBoardScreen = new LeaderBoardScreen();
+
+        this.state = GameState.MENU;
+        this.showPressSpace = true;
     }
 
-    public static Game getInstance() {
-        if (instance == null) {
-            instance = new Game();
+    public static Game createOrLoadGame(KeyInput k, MouseInput m) {
+        Assets.load();
+        Game game = SaveLoadManager.loadGame();
+
+        if (game == null) {
+            game = new Game();
+            game.loadAllLevelMaps();
+            game.startNewGame();
         }
-        return instance;
+
+        game.state = GameState.MENU;
+        game.initTransientFields(k, m);
+        game.restoreAfterLoad();
+
+        return game;
+    }
+
+    public void restoreAfterLoad() {
+        for (Brick b : bricks) {
+            b.restoreAfterLoad();
+        }
+        if (leaderboard == null) {
+            leaderboard = new LeaderBoard();
+        }
+    }
+
+    private void initTransientFields(KeyInput k, MouseInput m) {
+        this.screens = new Screens();
+        this.menu = new Menu();
+        this.leaderBoardScreen = new LeaderBoardScreen();
+        this.keys = k;
+        this.mouse = m;
+
+        if (this.explosions == null) {
+            this.explosions = new ArrayList<>();
+        }
+
+        if (this.powerUpManager == null) {
+            this.powerUpManager = new PowerUpManager();
+        }
+
+        this.levelMaps = new ArrayList<>();
+        loadAllLevelMaps();
     }
 
     public void setFps(int fps) {
@@ -69,25 +119,23 @@ public class Game {
     }
 
     private void loadAllLevelMaps() {
-        levelMaps = new ArrayList<>();
-
-        Pair<Integer, Integer>[][] level1 = LevelLoader.loadMap("mapLevel1.csv");
-        if (level1 != null) {
-            levelMaps.add(level1);
+        if (this.levelMaps == null) {
+            this.levelMaps = new ArrayList<>();
         }
 
-        Pair<Integer, Integer>[][] level2 = LevelLoader.loadMap("mapLevel2.csv");
-        if (level2 != null) {
-            levelMaps.add(level2);
-        }
-
-        Pair<Integer, Integer>[][] level3 = LevelLoader.loadMap("mapLevel3.csv");
-        if (level3 != null) {
-            levelMaps.add(level3);
+        for (int i = 1; i <= 5; i++) {
+            String file = "mapLevel" + i + ".csv";
+            Pair<Integer, Integer>[][] level = LevelLoader.loadMap(file);
+            if (level == null) break;
+            levelMaps.add(level);
         }
     }
 
     private List<Brick> spawnBricksForCurrentLevel() {
+        if (levelMaps == null || levelMaps.isEmpty()) {
+            loadAllLevelMaps();
+        }
+
         List<Brick> newBricks = new ArrayList<>();
         Pair<Integer, Integer>[][] currentMap = levelMaps.get(currentLevelIndex);
 
@@ -133,6 +181,9 @@ public class Game {
 
     private boolean nextLevel() {
         powerUpManager.reset();
+        if (levelMaps == null || levelMaps.isEmpty()) {
+            loadAllLevelMaps();
+        }
         currentLevelIndex++;
         return currentLevelIndex < levelMaps.size();
     }
@@ -202,20 +253,34 @@ public class Game {
             case MENU:
                 Menu.Action act = menu.update(mouse);
                 if (act == Menu.Action.START) {
+                    SaveLoadManager.deleteSave();
                     showPressSpace = true;
+                    startNewGame();
                     state = GameState.PLAYING;
+                } else if (act == Menu.Action.CONTINUE) {
+                    Game loaded = SaveLoadManager.loadGame();
+                    if (loaded != null) {
+                        loaded.restoreAfterLoad();
+                        this.state = GameState.PLAYING;
+                    }
                 } else if (act == Menu.Action.LEADERBOARD) {
                     state = GameState.LEADERBOARD;
-                } else if (act == Menu.Action.EXIT)
+                } else if (act == Menu.Action.EXIT) {
+                    SaveLoadManager.saveGame(this);
                     System.exit(0);
+                }
                 break;
             case PAUSED:
-                if (keys.consumeSpace())
+                if (keys.consumeSpace() || keys.isPressedP()) {
                     state = GameState.PLAYING;
+                } else if (keys.isPressedEsc()) {
+                    state = GameState.MENU;
+                }
                 break;
             case LEADERBOARD:
                 leaderBoardScreen.update(mouse);
                 if (leaderBoardScreen.isBackPressed()) {
+                    SaveLoadManager.saveGame(this);
                     state = GameState.MENU;
                 }
                 break;
@@ -281,6 +346,10 @@ public class Game {
             state = GameState.PAUSED;
         if (keys.isPressedR())
             startNewGame();
+        if (keys.isPressedEsc()) {
+            SaveLoadManager.saveGame(this);
+            state = GameState.MENU;
+        }
     }
 
     private void handlePaddleCollision() {
@@ -309,7 +378,7 @@ public class Game {
             hud.loseLife();
             powerUpManager.reset();
             bullets.clear();
-            if (hud.getLives() > 0) {
+            if (hud.getLives() >= 0) {
                 Ball newBall = new Ball(paddle.centerX(), paddle.getY() - Constants.BALL_RADIUS - 2,
                         Constants.BALL_RADIUS);
                 newBall.stickToPaddle(true);
@@ -319,6 +388,7 @@ public class Game {
                 paddle.deactivateLasers();
                 showPressSpace = true;
             } else {
+                SaveLoadManager.deleteSave();
                 state = GameState.GAME_OVER;
 
                 String name = JOptionPane.showInputDialog("Nhập tên của bạn:");
@@ -331,8 +401,9 @@ public class Game {
         if (allCleared()) {
             if (nextLevel()) {
                 loadCurrentLevel();
-                state = GameState.PAUSED;
             } else {
+                SaveLoadManager.deleteSave();
+
                 String name = JOptionPane.showInputDialog("Nhập tên của bạn:");
                 if (name != null && !name.trim().isEmpty()) {
                     leaderboard.addScore(name.trim(), hud.getScore());
@@ -454,6 +525,8 @@ public class Game {
                 }
                 break;
             case PAUSED:
+                screens.drawCenterText(g, "TIME STOP",
+                        "Press P / SPACE to continue\nPress Esc to take a break");
                 break;
             case LEADERBOARD:
                 leaderBoardScreen.render(g);

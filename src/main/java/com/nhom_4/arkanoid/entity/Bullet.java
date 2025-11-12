@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 public class Bullet extends Entity {
-    private final double speed = -600; // Tốc độ bay lên (âm)
+    private transient final double SPEED = -600; // Tốc độ bay lên (âm)
     private boolean active = true;
 
     public Bullet(double x, double y) {
@@ -16,7 +16,7 @@ public class Bullet extends Entity {
 
     @Override
     public void update(double dt) {
-        y += speed * dt;
+        y += SPEED * dt;
         // Nếu bay ra khỏi màn hình thì vô hiệu hóa
         if (y < 0) {
             active = false;
