@@ -1,8 +1,8 @@
 package com.nhom_4.arkanoid.ui;
 
-import java.awt.*;
-
 import com.nhom_4.arkanoid.config.Constants;
+
+import java.awt.*;
 
 public class Screens {
     public void drawBackground(Graphics2D g) {
@@ -42,7 +42,8 @@ public class Screens {
 
     public void drawDeathLine(Graphics2D g) {
         Stroke oldStroke = g.getStroke();
-        Stroke dashed = new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[] { 9 }, 0);
+        Stroke dashed = new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
+                                    0, new float[]{9}, 0);
         g.setStroke(dashed);
         g.setColor(new Color(255, 0, 0, 150));
         int yPos = (Constants.HEIGHT - 50) + (int) Constants.PADDLE_HEIGHT + 5;

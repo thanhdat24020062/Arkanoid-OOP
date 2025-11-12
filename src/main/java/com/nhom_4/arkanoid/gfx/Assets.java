@@ -1,16 +1,13 @@
 // gfx/Assets.java
 package com.nhom_4.arkanoid.gfx;
 
-import com.nhom_4.arkanoid.util.Files;
 import com.nhom_4.arkanoid.config.Constants;
+import com.nhom_4.arkanoid.util.Files;
 
-import java.awt.Font;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import java.util.List;
 import java.util.Map;
 

@@ -1,15 +1,12 @@
 package com.nhom_4.arkanoid.util;
 
-import javax.imageio.ImageIO;
-
 import com.nhom_4.arkanoid.gfx.Assets;
 
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.RenderingHints;
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.InputStream;
 
 public class Files {
     public static BufferedImage loadImageCP(String cpPath, int targetW, int targetH) {

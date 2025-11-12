@@ -7,7 +7,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
-import static com.nhom_4.arkanoid.config.Constants.*;
+import static com.nhom_4.arkanoid.config.Constants.HEIGHT;
+import static com.nhom_4.arkanoid.config.Constants.WIDTH;
 
 public class LeaderBoardScreen {
     private final Rectangle backButton = new Rectangle(20, 20, 120, 60);

@@ -9,10 +9,10 @@ public final class Renderer {
     }
 
     public static void renderText(Graphics2D g2,
-            String text,
-            Font font,
-            float x, float y,
-            Color fillColor) {
+                                  String text,
+                                  Font font,
+                                  float x, float y,
+                                  Color fillColor) {
         if (text == null || text.isEmpty())
             return;
 
@@ -46,22 +46,22 @@ public final class Renderer {
     }
 
     public static Rectangle drawButtonInMenu(Graphics2D g,
-            BufferedImage bg,
-            String text,
-            int centerX, int centerY,
-            Font font,
-            Point mousePos) {
+                                             BufferedImage bg,
+                                             String text,
+                                             int centerX, int centerY,
+                                             Font font,
+                                             Point mousePos) {
         return drawButtonInMenu(g, bg, text, centerX, centerY, font, mousePos, 1.0f, 1.06f);
     }
 
     public static Rectangle drawButtonInMenu(Graphics2D g,
-            BufferedImage bg,
-            String text,
-            int centerX, int centerY,
-            Font font,
-            Point mousePos,
-            float scaleNormal,
-            float scaleHover) {
+                                             BufferedImage bg,
+                                             String text,
+                                             int centerX, int centerY,
+                                             Font font,
+                                             Point mousePos,
+                                             float scaleNormal,
+                                             float scaleHover) {
 
         if (bg == null)
             return new Rectangle(0, 0, 0, 0);
@@ -90,7 +90,7 @@ public final class Renderer {
 
         g.drawImage(bg, x, y, w, h, null);
         float textScale = hovered ? 1.10f : 1.00f;
-        Font fontScaled = font.deriveFont((float) (font.getSize2D() * textScale));
+        Font fontScaled = font.deriveFont(font.getSize2D() * textScale);
 
         float strokeWidth = Math.max(1f, fontScaled.getSize2D() * 0.10f);
 

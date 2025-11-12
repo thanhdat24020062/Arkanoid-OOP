@@ -9,12 +9,17 @@ public class PlayerScore implements Comparable<PlayerScore> {
         this.score = score;
     }
 
-    public String getName() { return name; }
-    public int getScore() { return score; }
+    public String getName() {
+        return name;
+    }
+
+    public int getScore() {
+        return score;
+    }
 
     @Override
     public int compareTo(PlayerScore other) {
-        return Integer.compare(other.score, this.score); // giảm dần
+        return Integer.compare(other.score, this.score);
     }
 
     @Override

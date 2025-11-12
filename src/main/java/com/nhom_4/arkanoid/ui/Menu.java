@@ -126,8 +126,8 @@ public class Menu {
     public void render(Graphics2D g, MouseInput mouseInput) {
         this.drawMenuBackground(g);
 
-        int baseY = Constants.HEIGHT / 2 - 20;
-        int gap = 90;
+        int baseY = Constants.HEIGHT / 2 - 40;
+        int gap = 105;
         Point mousePos = mouseInput.getPosition();
 
         int hoveredIndex = -1;

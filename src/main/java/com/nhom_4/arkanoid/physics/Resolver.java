@@ -1,8 +1,9 @@
 package com.nhom_4.arkanoid.physics;
 
-import java.awt.geom.Rectangle2D;
 import com.nhom_4.arkanoid.entity.Ball;
 import com.nhom_4.arkanoid.entity.Brick;
+
+import java.awt.geom.Rectangle2D;
 
 public class Resolver {
     public static void resolveBallBrick(Ball ball, Brick brick) {

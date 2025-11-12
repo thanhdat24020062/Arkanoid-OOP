@@ -9,6 +9,13 @@ public class ExplosionEffect extends Entity {
     private transient Animation animation;
     private boolean finished = false;
 
+    /**
+     * hiệu ứng nổ
+     * @param x tọa độ x
+     * @param y tọa độ y
+     * @param w chiều dài
+     * @param h chiều cao
+     */
     public ExplosionEffect(double x, double y, double w, double h) {
         this.x = x;
         this.y = y;
@@ -22,7 +29,7 @@ public class ExplosionEffect extends Entity {
     public void update(double dt) {
         if (animation != null) {
             animation.update(dt);
-            if (animation.getCurrentFrame() == Assets.explosionEffect.get(Assets.explosionEffect.size()-1)) {
+            if (animation.getCurrentFrame() == Assets.explosionEffect.get(Assets.explosionEffect.size() - 1)) {
                 finished = true;
             }
         }
@@ -32,7 +39,7 @@ public class ExplosionEffect extends Entity {
         if (!finished && animation != null) {
             Image frame = animation.getCurrentFrame();
             if (frame != null) {
-                g.drawImage(frame, (int) x, (int) y, (int) w, (int) h,null);
+                g.drawImage(frame, (int) x, (int) y, (int) w, (int) h, null);
             }
         }
     }

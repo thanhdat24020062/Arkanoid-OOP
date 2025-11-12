@@ -1,13 +1,13 @@
 package com.nhom_4.arkanoid.input;
 
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MouseInput extends MouseAdapter {
-    private volatile int clickX, clickY;
     private final AtomicBoolean pending = new AtomicBoolean(false);
+    private volatile int clickX, clickY;
     private volatile Point position = new Point(0, 0);
 
     @Override
@@ -21,7 +21,10 @@ public class MouseInput extends MouseAdapter {
     }
 
     // === HÀM LẤY VỊ TRÍ HIỆN TẠI CỦA CHUỘT ===
-    /** Trả về vị trí chuột hiện tại. */
+
+    /**
+     * Trả về vị trí chuột hiện tại.
+     */
     public Point getPosition() {
         return position; // hoặc: return new Point(position); // nếu muốn trả bản sao an toàn
     }

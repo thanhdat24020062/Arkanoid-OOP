@@ -4,5 +4,5 @@ public final class Settings {
     private Settings() {
     }
 
-    public static boolean audio = false; // bật/tắt âm
+    public static boolean audio = false;
 }

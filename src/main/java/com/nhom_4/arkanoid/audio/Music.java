@@ -13,7 +13,8 @@ public final class Music {
     private static Clip menuClip;
     private static Clip playingClip;
 
-    private Music() {}
+    private Music() {
+    }
 
     public static void init() {
         menuClip = loadClip("/sounds/MenuMusic.wav");

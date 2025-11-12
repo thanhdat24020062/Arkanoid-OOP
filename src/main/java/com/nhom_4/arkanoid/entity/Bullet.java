@@ -1,12 +1,16 @@
 package com.nhom_4.arkanoid.entity;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.*;
 
 public class Bullet extends Entity {
     private transient final double SPEED = -600; // Tốc độ bay lên (âm)
     private boolean active = true;
 
+    /**
+     * khởi tạo đạn
+     * @param x tọa độ x
+     * @param y tọa đô y
+     */
     public Bullet(double x, double y) {
         this.x = x;
         this.y = y;

@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public final class Sound  {
+public final class Sound {
     private static final ExecutorService audioPool = Executors.newFixedThreadPool(5);
 
     private static final String BASE_PATH = "/sounds/";
@@ -24,7 +24,8 @@ public final class Sound  {
     private static final String POP = BASE_PATH + "PopSound.wav";
     private static final String GAME_OVER = BASE_PATH + "GameOverSound.wav";
 
-    private Sound() {}
+    private Sound() {
+    }
 
     private static void play(String soundPath) {
         audioPool.submit(() -> {

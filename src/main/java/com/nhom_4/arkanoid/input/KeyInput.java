@@ -1,6 +1,7 @@
 package com.nhom_4.arkanoid.input;
 
-import java.awt.event.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 public class KeyInput implements KeyListener {
     private volatile boolean left, right;

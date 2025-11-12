@@ -10,6 +10,18 @@ import java.util.List;
 public class ExplosionBrick extends Brick {
     private final List<Brick> bricks;
 
+    /**
+     * khởi tạo gạch nổ
+     * @param x tọa độ x
+     * @param y tọa độ y
+     * @param w chiều dài
+     * @param h chiều cao
+     * @param health máu
+     * @param image ảnh
+     * @param type loại gạch (loại 6)
+     * @param bricks danh sách gạch liền kề ảnh hưởng bởi vụ nổ
+     * @param powerUpManager quản lí powerUp rơi cho gạch bị nổ
+     */
     public ExplosionBrick(double x, double y, double w, double h, int health,
             Image image, int type, List<Brick> bricks, PowerUpManager powerUpManager) {
         super(x, y, w, h, health, image, type);

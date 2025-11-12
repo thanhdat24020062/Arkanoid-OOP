@@ -25,12 +25,13 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Game implements Serializable {
-    private HUD hud;
+    private static Game game;
+    private final List<Bullet> bullets;
+    private final HUD hud;
     private transient Screens screens;
     private transient Menu menu;
     private transient LeaderBoard leaderboard;
     private PowerUpManager powerUpManager;
-    private final List<Bullet> bullets;
     private List<ExplosionEffect> explosions;
     private transient LeaderBoardScreen leaderBoardScreen;
     private GameState state;
@@ -45,7 +46,7 @@ public class Game implements Serializable {
     private transient MouseInput mouse;
     private boolean showPressSpace = true;
 
-    public Game() {
+    private Game() {
         this.powerUpManager = new PowerUpManager();
         this.bullets = new ArrayList<>();
         this.balls = new ArrayList<>();
@@ -58,12 +59,17 @@ public class Game implements Serializable {
         this.leaderBoardScreen = new LeaderBoardScreen();
 
         this.state = GameState.MENU;
-        this.showPressSpace = true;
     }
 
+    /**
+     * tạo game mới hoặc load file save
+     * @param k phím
+     * @param m chuột
+     * @return đối tượng game
+     */
     public static Game createOrLoadGame(KeyInput k, MouseInput m) {
         Assets.load();
-        Game game = SaveLoadManager.loadGame();
+        game = SaveLoadManager.loadGame();
 
         if (game == null) {
             game = new Game();
@@ -78,6 +84,9 @@ public class Game implements Serializable {
         return game;
     }
 
+    /**
+     * tải lại hình ảnh của brick và leaderboard khi load file save
+     */
     public void restoreAfterLoad() {
         for (Brick b : bricks) {
             b.restoreAfterLoad();
@@ -87,6 +96,11 @@ public class Game implements Serializable {
         }
     }
 
+    /**
+     * khởi tạo đối tượng transient
+     * @param k
+     * @param m
+     */
     private void initTransientFields(KeyInput k, MouseInput m) {
         this.screens = new Screens();
         this.menu = new Menu();
@@ -118,6 +132,9 @@ public class Game implements Serializable {
         this.mouse = m;
     }
 
+    /**
+     * tải tất cả levels
+     */
     private void loadAllLevelMaps() {
         if (this.levelMaps == null) {
             this.levelMaps = new ArrayList<>();
@@ -131,6 +148,10 @@ public class Game implements Serializable {
         }
     }
 
+    /**
+     * tạo các khối cho level hiện tại
+     * @return danh sách bricks
+     */
     private List<Brick> spawnBricksForCurrentLevel() {
         if (levelMaps == null || levelMaps.isEmpty()) {
             loadAllLevelMaps();
@@ -185,6 +206,8 @@ public class Game implements Serializable {
             loadAllLevelMaps();
         }
         currentLevelIndex++;
+        hud.setLevel(currentLevelIndex + 1);
+
         return currentLevelIndex < levelMaps.size();
     }
 
@@ -271,9 +294,10 @@ public class Game implements Serializable {
                 }
                 break;
             case PAUSED:
-                if (keys.consumeSpace() || keys.isPressedP()) {
+                if (keys.consumeSpace()) {
                     state = GameState.PLAYING;
                 } else if (keys.isPressedEsc()) {
+                    SaveLoadManager.saveGame(this);
                     state = GameState.MENU;
                 }
                 break;
@@ -284,12 +308,8 @@ public class Game implements Serializable {
                     state = GameState.MENU;
                 }
                 break;
-            case GAME_OVER:
-                if (keys.isPressedR())
-                    startNewGame();
-                break;
-            case YOU_WIN:
-                if (keys.isPressedR())
+            case GAME_OVER, YOU_WIN:
+                if (keys.isPressedR() || keys.isPressedEsc())
                     startNewGame();
                 break;
             case PLAYING:
@@ -413,6 +433,10 @@ public class Game implements Serializable {
         }
     }
 
+    /**
+     * xử lí khi brick mất máu
+     * @param brick brick
+     */
     private void brickGetHit(Brick brick) {
         boolean destroyed = brick.hit();
 
@@ -526,7 +550,7 @@ public class Game implements Serializable {
                 break;
             case PAUSED:
                 screens.drawCenterText(g, "TIME STOP",
-                        "Press P / SPACE to continue\nPress Esc to take a break");
+                        "Press SPACE to continue\nPress Esc to take a break");
                 break;
             case LEADERBOARD:
                 leaderBoardScreen.render(g);

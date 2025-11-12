@@ -5,18 +5,18 @@ import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 
 public class PowerUp implements Serializable {
-    private double x, y;
     private transient final double WIDTH = 20;
-    private transient final double HEIGTH = 20;
+    private transient final double HEIGHT = 20;
     private transient final double SPEED = 150; // Tốc độ rơi
-    private boolean active = true;
-
     private final PowerUpType type;
+    private final double x;
+    private double y;
+    private boolean active = true;
 
     public PowerUp(double x, double y, PowerUpType type) {
         // Khởi tạo ở giữa viên gạch
         this.x = x - WIDTH / 2;
-        this.y = y - HEIGTH / 2;
+        this.y = y - HEIGHT / 2;
         this.type = type;
     }
 
@@ -30,7 +30,7 @@ public class PowerUp implements Serializable {
 
     public void render(Graphics2D g) {
         g.setColor(getColor());
-        g.fillRect((int) x, (int) y, (int) WIDTH, (int) HEIGTH);
+        g.fillRect((int) x, (int) y, (int) WIDTH, (int) HEIGHT);
 
         // Vẽ chữ cái để phân biệt
         g.setColor(Color.WHITE);
@@ -78,7 +78,7 @@ public class PowerUp implements Serializable {
     }
 
     public Rectangle2D.Double getRect() {
-        return new Rectangle2D.Double(x, y, WIDTH, HEIGTH);
+        return new Rectangle2D.Double(x, y, WIDTH, HEIGHT);
     }
 
     public PowerUpType getType() {

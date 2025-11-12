@@ -22,7 +22,7 @@ public class PowerUpManager implements Serializable {
 
     /**
      * Thử tạo một power-up tại vị trí của viên gạch bị phá.
-     * 
+     *
      * @param brickX Tọa độ x của viên gạch
      * @param brickY Tọa độ y của viên gạch
      */

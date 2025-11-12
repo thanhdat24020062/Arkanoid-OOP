@@ -9,9 +9,9 @@ import java.awt.*;
 
 public class GamePanel extends JPanel implements Runnable {
     private static GamePanel instance;
-    private Game game;
     private final KeyInput keys = new KeyInput();
     private final MouseInput mouse = new MouseInput();
+    private final Game game;
     private Thread loop;
     private boolean running = false;
 

@@ -16,8 +16,14 @@ public class Ball extends Entity {
 
     // Thêm hiệu ứng vệt sáng
     private final List<Point> trail = new ArrayList<>();
-    private transient static final int TRAIL_LENGTH = 30;
+    private static final int TRAIL_LENGTH = 30;
 
+    /**
+     * khởi tạo ball
+     * @param x tọa độ x
+     * @param y tọa độ y
+     * @param r bán kính
+     */
     public Ball(double x, double y, double r) {
         this.x = x;
         this.y = y;
@@ -44,7 +50,7 @@ public class Ball extends Entity {
 
         // Vẽ thêm hiệu ứng lửa nếu cần
         if (isFireball) {
-            g.setColor(new Color(255, 100, 0, 100)); // Màu cam, hơi trong suốt
+            g.setColor(new Color(255, 100, 0, 100));
             g.fillOval((int) (x - r - 2), (int) (y - r - 2), (int) (r * 2) + 4, (int) (r * 2) + 4);
         }
     }
@@ -120,6 +126,11 @@ public class Ball extends Entity {
         this.fireballTimer = 0;
     }
 
+    /**
+     * nhân bản bóng và phóng đi
+     * @param angleOffset góc phóng
+     * @return
+     */
     public Ball cloneAndLaunch(double angleOffset) {
         // Tạo một quả bóng mới tại đúng vị trí của bóng cũ
         Ball clone = new Ball(this.x, this.y, this.r);

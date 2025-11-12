@@ -1,18 +1,26 @@
 package com.nhom_4.arkanoid.entity;
 
-import java.awt.Graphics2D;
-import java.awt.Image;
-
 import com.nhom_4.arkanoid.gfx.Animation;
 import com.nhom_4.arkanoid.gfx.Assets;
 
+import java.awt.*;
+
 public class Brick extends Entity {
 
+    protected transient Animation animation;
     private int health;
     private int type;
     private transient Image brickImage;
-    protected transient Animation animation;
 
+    /**
+     * khởi tạo brick
+     * @param x tọa độ x
+     * @param y tọa độ y
+     * @param w chiều dài
+     * @param h chiều rộng
+     * @param health máu
+     * @param image ảnh
+     */
     public Brick(double x, double y, double w, double h, int health, Image image) {
         this.x = x;
         this.y = y;
@@ -23,6 +31,16 @@ public class Brick extends Entity {
         this.type = 0;
     }
 
+    /**
+     khởi tạo brick
+     * @param x tọa độ x
+     * @param y tọa độ y
+     * @param w chiều dài
+     * @param h chiều rộng
+     * @param health máu
+     * @param image ảnh
+     * @param type loại gạch (0: unbreakable; 1,2,3,4,5: normal brick; 6: explosion brick; 40,50: broken brick)
+     */
     public Brick(double x, double y, double w, double h, int health, Image image, int type) {
         this.x = x;
         this.y = y;
@@ -100,6 +118,9 @@ public class Brick extends Entity {
         }
     }
 
+    /**
+     * tải lại hình ảnh và animation cho gạch khi load game
+     */
     public void restoreAfterLoad() {
         if (type >= 0) {
             brickImage = Assets.bricks.get(type);

@@ -4,11 +4,11 @@ import java.awt.*;
 import java.util.List;
 
 public class Animation {
-    private List<Image> frames;
+    private final List<Image> frames;
     private int currentFrame;
     private double frameTimer = 0;
-    private double frameDuration;
-    private double loopDelay;
+    private final double frameDuration;
+    private final double loopDelay;
     private double loopTimer = 0;
 
     public Animation(List<Image> frames, double frameDuration, double loopDelay) {

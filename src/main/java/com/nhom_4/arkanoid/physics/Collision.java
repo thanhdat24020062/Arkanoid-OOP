@@ -1,12 +1,13 @@
 package com.nhom_4.arkanoid.physics;
 
-import java.util.List;
-
 import com.nhom_4.arkanoid.audio.Sound;
 import com.nhom_4.arkanoid.config.Constants;
 import com.nhom_4.arkanoid.entity.Ball;
 
-import static com.nhom_4.arkanoid.config.Constants.*;
+import java.util.List;
+
+import static com.nhom_4.arkanoid.config.Constants.TOP_WALL;
+import static com.nhom_4.arkanoid.config.Constants.WALL_THICK;
 
 public final class Collision {
     private Collision() {
@@ -31,7 +32,7 @@ public final class Collision {
         }
     }
 
-    // --- Thêm phương thức phản xạ cho nhiều bóng ---
+    // Va chạm tường cho nhiều bóng
     public static void reflectBallOnWallsList(List<Ball> balls) {
         for (Ball ball : balls) {
             reflectBallOnWalls(ball);
